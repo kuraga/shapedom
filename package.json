@@ -1,0 +1,47 @@
+{
+  "name": "shapedom",
+  "version": "0.0.0",
+  "license": "MIT",
+
+  "description": "Static-as-possible virtual DOM JavaScript library.",
+  "keywords": [
+    "DOM",
+    "virtual DOM"
+  ],
+  "homepage": "https://github.com/kuraga/shapedom",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kuraga/shapedom.git"
+  },
+  "author": {
+    "name": "Alexander Kurakin",
+    "email": "kuraga333@mail.ru"
+  },
+  "bugs": {
+    "url": "https://github.com/kuraga/shapedom/issues",
+    "email": "kuraga333@mail.ru"
+  },
+
+  "main": "shapedom.js",
+
+  "devDependencies": {
+    "babel-plugin-transform-runtime": "^6.4.3",
+    "babel-preset-es2015": "^6.3.13",
+    "babel-preset-stage-1": "^6.3.13",
+    "babelify": "^7.2.0",
+    "browserify": "^13.0.0",
+    "clone": "^1.0.2",
+    "glob": "^6.0.4",
+    "tape-run": "^2.1.3",
+    "tapes": "^3.1.0",
+    "typescript": "^1.8.0-beta"
+  },
+  "dependencies": {
+    "an-uuid": "^1.0.0",
+    "babel-runtime": "^6.3.19"
+  },
+  "scripts": {
+    "build": "tsc --target es6 --noImplicitAny shapedom.ts",
+    "test": "node scripts/buildTest.js | tape-run"
+  }
+}
