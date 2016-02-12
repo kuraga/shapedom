@@ -1,6 +1,6 @@
 import test from 'tapes';
 
-import Shapedom, { ElementTemplate } from '../../shapedom';
+import Shapedom, { ElementTemplate } from '../../dist/shapedom';
 
 test('shapedom.createTemplate with element shape', function (t) {
   let shapedom;

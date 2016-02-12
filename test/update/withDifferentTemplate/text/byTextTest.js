@@ -1,6 +1,6 @@
 import test from 'tapes';
 
-import Shapedom from '../../../../shapedom';
+import Shapedom from '../../../../dist/shapedom';
 
 test('shapedom.update text template by different text template', function (t) {
   let shapedom;

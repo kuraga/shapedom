@@ -1,6 +1,6 @@
 import {
   TextTemplate, ElementTemplate
-} from '../../shapedom';
+} from '../../dist/shapedom';
 
 export default function cloneTemplate(template) {
   let clonedTemplate;

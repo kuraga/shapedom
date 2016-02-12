@@ -22,9 +22,9 @@
     "email": "kuraga333@mail.ru"
   },
 
-  "main": "shapedom.es5.js",
-  "jsnext:main": "shapedom.js",
-  "browser:main": "shapedom.browser.js",
+  "main": "dist/shapedom.es5.js",
+  "jsnext:main": "dist/shapedom.js",
+  "browser:main": "dist/shapedom.browser.js",
 
   "devDependencies": {
     "babel-cli": "^6.5.1",
@@ -44,9 +44,10 @@
     "babel-runtime": "^6.3.19"
   },
   "scripts": {
-    "build": "tsc --target es6 --noImplicitAny shapedom.ts",
-    "build-es5": "babel --presets es2015,stage-1 --plugins transform-runtime --out-file shapedom.es5.js shapedom.js",
-    "build-browser": "browserify --standalone Shapedom --outfile shapedom.browser.js shapedom.es5.js",
+    "build": "npm run build-es6 && npm run build-es5 && npm run build-browser",
+    "build-es6": "tsc --target es6 --noImplicitAny --outDir dist src/shapedom.ts",
+    "build-es5": "babel --presets es2015,stage-1 --plugins transform-runtime --out-file dist/shapedom.es5.js dist/shapedom.js",
+    "build-browser": "browserify --standalone Shapedom --outfile dist/shapedom.browser.js dist/shapedom.es5.js",
     "test": "node scripts/buildTest.js | tape-run"
   }
 }

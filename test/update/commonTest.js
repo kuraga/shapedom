@@ -1,6 +1,6 @@
 import test from 'tapes';
 
-import Shapedom from '../../shapedom';
+import Shapedom from '../../dist/shapedom';
 
 test('shapedom.update unrendered node', function (t) {
   let shapedom = new Shapedom(document);

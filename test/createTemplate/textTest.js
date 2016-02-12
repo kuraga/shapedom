@@ -1,6 +1,6 @@
 import test from 'tapes';
 
-import Shapedom, { TextTemplate } from '../../shapedom';
+import Shapedom, { TextTemplate } from '../../dist/shapedom';
 
 test('shapedom.createTemplate with text shape', function (t) {
   let shapedom;

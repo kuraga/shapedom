@@ -1,7 +1,7 @@
 import test from 'tapes';
 import cloneTemplate from '../../helpers/cloneTemplate';
 
-import Shapedom from '../../../shapedom';
+import Shapedom from '../../../dist/shapedom';
 
 test('shapedom.update element template by same template', function (t) {
   let shapedom;
