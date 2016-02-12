@@ -1,11 +1,11 @@
 import test from 'tapes';
 
-import ShapeDom from '../shapedom';
+import Shapedom from '../shapedom';
 
-test('ShapeDom class', function (t) {
-  let shapedom = new ShapeDom(document);
+test('Shapedom class', function (t) {
+  let shapedom = new Shapedom(document);
 
-  t.assert(shapedom instanceof ShapeDom);
+  t.assert(shapedom instanceof Shapedom);
   t.is(shapedom.document, document);
 
   t.end();

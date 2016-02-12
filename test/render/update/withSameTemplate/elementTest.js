@@ -1,7 +1,7 @@
 import test from 'tapes';
 import cloneTemplate from '../../../helpers/cloneTemplate';
 
-import ShapeDom from '../../../../shapedom';
+import Shapedom from '../../../../shapedom';
 
 test('shapedom.update element template by same template', function (t) {
   let shapedom;
@@ -9,7 +9,7 @@ test('shapedom.update element template by same template', function (t) {
   let elementNode, root;
 
   t.beforeEach(function (t) {
-    shapedom = new ShapeDom(document);
+    shapedom = new Shapedom(document);
 
     root = document.createElement('div');
 

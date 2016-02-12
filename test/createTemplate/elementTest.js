@@ -1,12 +1,12 @@
 import test from 'tapes';
 
-import ShapeDom, { ElementTemplate } from '../../shapedom';
+import Shapedom, { ElementTemplate } from '../../shapedom';
 
 test('shapedom.createTemplate with element shape', function (t) {
   let shapedom;
 
   t.beforeEach(function (t) {
-    shapedom = new ShapeDom(document);
+    shapedom = new Shapedom(document);
 
     t.end();
   });

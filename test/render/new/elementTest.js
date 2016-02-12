@@ -1,12 +1,12 @@
 import test from 'tapes';
 
-import ShapeDom from '../../../shapedom';
+import Shapedom from '../../../shapedom';
 
 test('shapedom.render a new element template', function (t) {
   let shapedom;
 
   t.beforeEach(function (t) {
-    shapedom = new ShapeDom(document);
+    shapedom = new Shapedom(document);
 
     t.end();
   });

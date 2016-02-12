@@ -44,7 +44,7 @@ export class TextTemplate extends Template {
 }
 
 
-export default class ShapeDom {
+export default class Shapedom {
   document: Document;
   __templates: WeakMap<Node, Template>;
 

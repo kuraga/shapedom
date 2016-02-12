@@ -1,9 +1,9 @@
 import test from 'tapes';
 
-import ShapeDom from '../../../shapedom';
+import Shapedom from '../../../shapedom';
 
 test('shapedom.update unrendered node', function (t) {
-  let shapedom = new ShapeDom(document);
+  let shapedom = new Shapedom(document);
 
   let template = shapedom.createTemplate({
     tag: 'div',
@@ -21,7 +21,7 @@ test('shapedom.update unrendered node', function (t) {
 
 
 test('shapedom.update unattached node', function (t) {
-  let shapedom = new ShapeDom(document);
+  let shapedom = new Shapedom(document);
 
   let template = shapedom.createTemplate({
     tag: 'div',
