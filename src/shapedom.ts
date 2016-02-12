@@ -11,31 +11,29 @@ declare var require: (id: string) => any;
 const uuid = require('an-uuid');
 
 
-type Attrs = { [key: string]: string };
-
-interface Shape {
+export interface Shape {
 }
 
-interface ElementShape extends Shape {
+export interface ElementShape extends Shape {
   tag: string;
-  attrs: Attrs;
+  attrs: { [key: string]: string };
   // TODO: Also child can be a template
   children?: Shape[];
 }
 
 // TODO: Can be just string
-interface TextShape extends Shape {
+export interface TextShape extends Shape {
   text: string;
 }
 
 
-abstract class Template {
+export abstract class Template {
   uuid: string;
 }
 
 export class ElementTemplate extends Template {
   tag: string;
-  attrs: Attrs;
+  attrs: { [key: string]: string };
   children: Template[];
 }
 
@@ -46,7 +44,7 @@ export class TextTemplate extends Template {
 
 export default class Shapedom {
   document: Document;
-  __templates: WeakMap<Node, Template>;
+  private __templates: WeakMap<Node, Template>;
 
   constructor(document: Document) {
     this.document = document;
