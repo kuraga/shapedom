@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.TextTemplate = exports.ElementTemplate = undefined;
+exports.TextTemplate = exports.ElementTemplate = exports.Template = undefined;
 
 var _keys = require('babel-runtime/core-js/object/keys');
 
@@ -47,7 +47,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 // TODO: properties vs attributes
 var uuid = require('an-uuid');
 
-var Template = function Template() {
+var Template = exports.Template = function Template() {
     (0, _classCallCheck3.default)(this, Template);
 };
 
@@ -352,7 +352,8 @@ var Shapedom = function () {
                 }
             } else {
                 for (var i = childrenToUpdate; i < oldChildren.length; ++i) {
-                    this.__removeNode(element.childNodes[i]);
+                    // Pass the same index each time as element.childNodes is a *live* collection
+                    this.__removeNode(element.childNodes[childrenToUpdate]);
                 }
             }
             return element.childNodes;
