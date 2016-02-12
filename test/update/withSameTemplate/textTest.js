@@ -1,8 +1,9 @@
 import test from 'tapes';
+import cloneTemplate from '../../helpers/cloneTemplate';
 
-import Shapedom from '../../../../../shapedom';
+import Shapedom from '../../../shapedom';
 
-test('shapedom.update text template by different text template', function (t) {
+test('shapedom.update text template by same template', function (t) {
   let shapedom;
   let textTemplate, clonedTextTemplate;
   let textNode, root;
@@ -18,15 +19,13 @@ test('shapedom.update text template by different text template', function (t) {
     textNode = shapedom.render(textTemplate);
     root.appendChild(textNode);
 
+    clonedTextTemplate = cloneTemplate(textTemplate);
+
     t.end();
   });
 
-  t.test('with the same text', function (t) {
-    let anotherTextTemplate = shapedom.createTemplate({
-      text: 'hi there'
-    });
-
-    let result = shapedom.update(textNode, anotherTextTemplate);
+  t.test('with no changes', function (t) {
+    let result = shapedom.update(textNode, clonedTextTemplate);
 
     t.is(root.childNodes[0], result);
     t.assert(result instanceof Text);
@@ -35,12 +34,10 @@ test('shapedom.update text template by different text template', function (t) {
     t.end();
   });
 
-  t.test('with another text', function (t) {
-    let anotherTextTemplate = shapedom.createTemplate({
-      text: 'new text'
-    });
+  t.test('text changed', function (t) {
+    clonedTextTemplate.text = 'new text';
 
-    let result = shapedom.update(textNode, anotherTextTemplate);
+    let result = shapedom.update(textNode, clonedTextTemplate);
 
     t.is(root.childNodes[0], result);
     t.assert(result instanceof Text);

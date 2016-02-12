@@ -7,7 +7,7 @@ export class ElementTemplate extends Template {
 }
 export class TextTemplate extends Template {
 }
-export default class ShapeDom {
+export default class Shapedom {
     constructor(document) {
         this.document = document;
         this.__templates = new WeakMap();
