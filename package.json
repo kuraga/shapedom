@@ -24,6 +24,7 @@
 
   "main": "shapedom.es5.js",
   "jsnext:main": "shapedom.js",
+  "browser:main": "shapedom.browser.js",
 
   "devDependencies": {
     "babel-cli": "^6.5.1",
@@ -45,6 +46,7 @@
   "scripts": {
     "build": "tsc --target es6 --noImplicitAny shapedom.ts",
     "build-es5": "babel --presets es2015,stage-1 --plugins transform-runtime --out-file shapedom.es5.js shapedom.js",
+    "build-browser": "browserify --standalone Shapedom --outfile shapedom.browser.js shapedom.es5.js",
     "test": "node scripts/buildTest.js | tape-run"
   }
 }
