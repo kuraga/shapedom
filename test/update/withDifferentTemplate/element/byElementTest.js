@@ -242,6 +242,30 @@ test('shapedom.update element template by same template', function (t) {
 
     t.test('child removed', function (t) {
       clonedElementShape.children.splice(0, 1);
+      let anotherElementTemplate = shapedom.createTemplate(clonedElementShape);
+
+      let result = shapedom.update(elementNode, anotherElementTemplate);
+
+      t.assert(result instanceof Element);
+      t.is(result.outerHTML, '<div id="box123" class="box cube">another text</div>');
+
+      t.end();
+    });
+
+    t.test('two children removed', function (t) {
+      clonedElementShape.children = [];
+      let anotherElementTemplate = shapedom.createTemplate(clonedElementShape);
+
+      let result = shapedom.update(elementNode, anotherElementTemplate);
+
+      t.assert(result instanceof Element);
+      t.is(result.outerHTML, '<div id="box123" class="box cube"></div>');
+
+      t.end();
+    });
+
+    t.test('child added and removed', function (t) {
+      clonedElementShape.children.splice(0, 1);
       clonedElementShape.children.push({
         tag: 'span',
         attrs: {},
@@ -257,18 +281,6 @@ test('shapedom.update element template by same template', function (t) {
 
       t.assert(result instanceof Element);
       t.is(result.outerHTML, '<div id="box123" class="box cube">another text<span>additional text</span></div>');
-
-      t.end();
-    });
-
-    t.test('child added and removed', function (t) {
-      clonedElementShape.children.splice(0, 1);
-      let anotherElementTemplate = shapedom.createTemplate(clonedElementShape);
-
-      let result = shapedom.update(elementNode, anotherElementTemplate);
-
-      t.assert(result instanceof Element);
-      t.is(result.outerHTML, '<div id="box123" class="box cube">another text</div>');
 
       t.end();
     });

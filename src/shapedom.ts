@@ -236,7 +236,8 @@ export default class Shapedom {
       }
     } else {
       for (let i = childrenToUpdate; i < oldChildren.length; ++i) {
-        this.__removeNode(element.childNodes[i]);
+        // Pass the same index each time as element.childNodes is a *live* collection
+        this.__removeNode(element.childNodes[childrenToUpdate]);
       }
     }
 
