@@ -25,6 +25,7 @@
   "main": "index.js",
   "jsnext:main": "dist/shapedom.js",
   "browser:main": "dist/shapedom.browser.js",
+  "typings": "dist/shapedom.d.ts",
 
   "devDependencies": {
     "babel-cli": "^6.5.1",
