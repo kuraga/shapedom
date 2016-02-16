@@ -49,6 +49,6 @@
     "build-es6": "tsc --target es6 --declaration --noImplicitAny --outDir dist src/shapedom.ts",
     "build-es5": "babel --presets es2015,stage-1 --plugins transform-runtime --out-file dist/shapedom.es5.js dist/shapedom.js",
     "build-browser": "browserify --standalone Shapedom --outfile dist/shapedom.browser.js dist/shapedom.es5.js",
-    "test": "node scripts/buildTest.js | tape-run"
+    "test": "npm run build-es6 && node scripts/buildTest.js | tape-run"
   }
 }
