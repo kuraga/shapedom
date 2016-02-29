@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.TextTemplate = exports.ElementTemplate = exports.Template = undefined;
+exports.Template = undefined;
 
 var _keys = require('babel-runtime/core-js/object/keys');
 
@@ -25,18 +25,6 @@ var _createClass2 = require('babel-runtime/helpers/createClass');
 
 var _createClass3 = _interopRequireDefault(_createClass2);
 
-var _getPrototypeOf = require('babel-runtime/core-js/object/get-prototype-of');
-
-var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
-
-var _possibleConstructorReturn2 = require('babel-runtime/helpers/possibleConstructorReturn');
-
-var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
-
-var _inherits2 = require('babel-runtime/helpers/inherits');
-
-var _inherits3 = _interopRequireDefault(_inherits2);
-
 var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
 
 var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
@@ -51,28 +39,6 @@ var Template = exports.Template = function Template() {
     (0, _classCallCheck3.default)(this, Template);
 };
 
-var ElementTemplate = exports.ElementTemplate = function (_Template) {
-    (0, _inherits3.default)(ElementTemplate, _Template);
-
-    function ElementTemplate() {
-        (0, _classCallCheck3.default)(this, ElementTemplate);
-        return (0, _possibleConstructorReturn3.default)(this, (0, _getPrototypeOf2.default)(ElementTemplate).apply(this, arguments));
-    }
-
-    return ElementTemplate;
-}(Template);
-
-var TextTemplate = exports.TextTemplate = function (_Template2) {
-    (0, _inherits3.default)(TextTemplate, _Template2);
-
-    function TextTemplate() {
-        (0, _classCallCheck3.default)(this, TextTemplate);
-        return (0, _possibleConstructorReturn3.default)(this, (0, _getPrototypeOf2.default)(TextTemplate).apply(this, arguments));
-    }
-
-    return TextTemplate;
-}(Template);
-
 var Shapedom = function () {
     function Shapedom(document) {
         (0, _classCallCheck3.default)(this, Shapedom);
@@ -82,81 +48,66 @@ var Shapedom = function () {
     }
 
     (0, _createClass3.default)(Shapedom, [{
-        key: '__createTextTemplate',
-        value: function __createTextTemplate(shape) {
-            var template = new TextTemplate();
-            template.uuid = uuid();
-            template.text = shape.text;
-            return template;
-        }
-    }, {
-        key: '__createElementTemplate',
-        value: function __createElementTemplate(shape) {
-            var template = new ElementTemplate();
-            template.uuid = uuid();
-            template.tag = shape.tag;
-            template.attrs = (0, _assign2.default)({}, shape.attrs);
-            template.children = [];
-            if ('children' in shape) {
-                var _iteratorNormalCompletion = true;
-                var _didIteratorError = false;
-                var _iteratorError = undefined;
+        key: 'createTemplate',
+        value: function createTemplate(shapeOrString) {
+            if (typeof shapeOrString === 'string' || shapeOrString instanceof String) {
+                return shapeOrString;
+            } else {
+                var template = new Template();
+                template.uuid = uuid();
+                template.tag = shapeOrString.tag;
+                template.attrs = (0, _assign2.default)({}, shapeOrString.attrs);
+                template.children = [];
+                if ('children' in shapeOrString) {
+                    var _iteratorNormalCompletion = true;
+                    var _didIteratorError = false;
+                    var _iteratorError = undefined;
 
-                try {
-                    for (var _iterator = (0, _getIterator3.default)(shape.children), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                        var childShape = _step.value;
-
-                        var childTemplate = this.createTemplate(childShape);
-                        template.children.push(childTemplate);
-                    }
-                } catch (err) {
-                    _didIteratorError = true;
-                    _iteratorError = err;
-                } finally {
                     try {
-                        if (!_iteratorNormalCompletion && _iterator.return) {
-                            _iterator.return();
+                        for (var _iterator = (0, _getIterator3.default)(shapeOrString.children), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                            var childShape = _step.value;
+
+                            var childTemplate = this.createTemplate(childShape);
+                            template.children.push(childTemplate);
                         }
+                    } catch (err) {
+                        _didIteratorError = true;
+                        _iteratorError = err;
                     } finally {
-                        if (_didIteratorError) {
-                            throw _iteratorError;
+                        try {
+                            if (!_iteratorNormalCompletion && _iterator.return) {
+                                _iterator.return();
+                            }
+                        } finally {
+                            if (_didIteratorError) {
+                                throw _iteratorError;
+                            }
                         }
                     }
                 }
-            }
-            return template;
-        }
-    }, {
-        key: 'createTemplate',
-        value: function createTemplate(shape) {
-            if (shape.text !== undefined) {
-                return this.__createTextTemplate(shape);
-            } else if (shape.tag !== undefined) {
-                return this.__createElementTemplate(shape);
-            } else {
-                throw new Error('Invalid shape type');
+                return template;
             }
         }
     }, {
         key: '__createText',
-        value: function __createText(textTemplate) {
-            var textNode = this.document.createTextNode(textTemplate.text);
-            this.__templates.set(textNode, textTemplate);
+        value: function __createText(text) {
+            var textNode = this.document.createTextNode(text);
+            this.__templates.set(textNode, text);
             return textNode;
         }
     }, {
         key: '__createElement',
-        value: function __createElement(elementTemplate) {
-            var element = this.document.createElement(elementTemplate.tag);
+        value: function __createElement(template) {
+            var element = this.document.createElement(template.tag);
             var _iteratorNormalCompletion2 = true;
             var _didIteratorError2 = false;
             var _iteratorError2 = undefined;
 
             try {
-                for (var _iterator2 = (0, _getIterator3.default)((0, _keys2.default)(elementTemplate.attrs)), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                for (var _iterator2 = (0, _getIterator3.default)((0, _keys2.default)(template.attrs)), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
                     var attrName = _step2.value;
 
-                    var attrValue = elementTemplate.attrs[attrName];
+                    var attrValue = template.attrs[attrName];
                     element.setAttribute(attrName, attrValue);
                 }
             } catch (err) {
@@ -179,7 +130,7 @@ var Shapedom = function () {
             var _iteratorError3 = undefined;
 
             try {
-                for (var _iterator3 = (0, _getIterator3.default)(elementTemplate.children), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+                for (var _iterator3 = (0, _getIterator3.default)(template.children), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
                     var child = _step3.value;
 
                     var childElement = this.__createNode(child);
@@ -200,50 +151,49 @@ var Shapedom = function () {
                 }
             }
 
-            this.__templates.set(element, elementTemplate);
+            this.__templates.set(element, template);
             return element;
         }
     }, {
         key: '__createNode',
-        value: function __createNode(template) {
-            if (template instanceof TextTemplate) {
-                return this.__createText(template);
-            } else if (template instanceof ElementTemplate) {
-                return this.__createElement(template);
+        value: function __createNode(templateOrString) {
+            if (typeof templateOrString === 'string' || templateOrString instanceof String) {
+                return this.__createText(templateOrString);
+            } else if (templateOrString instanceof Template) {
+                return this.__createElement(templateOrString);
             } else {
                 throw new Error('Invalid template type');
             }
         }
     }, {
         key: '__updateTextByText',
-        value: function __updateTextByText(textNode, newTextTemplate) {
-            var oldTextTemplate = this.__templates.get(textNode);
-            if (newTextTemplate.text === oldTextTemplate.text) {
+        value: function __updateTextByText(textNode, newText) {
+            var oldText = this.__templates.get(textNode);
+            if (newText === oldText) {
                 return textNode;
             }
             this.__templates.delete(textNode);
-            var newTextNode = this.__createText(newTextTemplate);
+            var newTextNode = this.__createText(newText);
             var parent = textNode.parentNode;
             parent.replaceChild(newTextNode, textNode);
-            this.__templates.set(newTextNode, newTextTemplate);
+            this.__templates.set(newTextNode, newText);
             return newTextNode;
         }
     }, {
         key: '__updateTextByElement',
-        value: function __updateTextByElement(textNode, newElementTemplate) {
-            var oldTextTemplate = this.__templates.get(textNode);
+        value: function __updateTextByElement(textNode, newTemplate) {
             this.__templates.delete(textNode);
-            var newElement = this.__createElement(newElementTemplate);
+            var newElement = this.__createElement(newTemplate);
             var parent = textNode.parentNode;
             parent.replaceChild(newElement, textNode);
             return newElement;
         }
     }, {
         key: '__updateElementByText',
-        value: function __updateElementByText(element, newTextTemplate) {
+        value: function __updateElementByText(element, newText) {
             this.__removeChildren(element);
             this.__templates.delete(element);
-            var newTextNode = this.__createText(newTextTemplate);
+            var newTextNode = this.__createText(newText);
             var parent = element.parentNode;
             parent.replaceChild(newTextNode, element);
             return newTextNode;
@@ -285,22 +235,22 @@ var Shapedom = function () {
         }
     }, {
         key: '__updateElementByElementSameTemplate',
-        value: function __updateElementByElementSameTemplate(element, newElementTemplate) {
-            var oldElementTemplate = this.__templates.get(element);
-            // Structure of newElementTemplate is the same as oldElementTemplate's,
-            // so newElementTemplate.tag === oldElementTemplate.tag
-            // Structure of newElementTemplate is the same as oldTemplate's,
-            // so newElementTemplate.attrs === oldElementTemplate.attrs
+        value: function __updateElementByElementSameTemplate(element, newTemplate) {
+            var oldTemplate = this.__templates.get(element);
+            // Structure of newTemplate is the same as oldTemplate's,
+            // so newTemplate.tag === oldTemplate.tag
+            // Structure of newTemplate is the same as oldTemplate's,
+            // so newTemplate.attrs === oldTemplate.attrs
             var _iteratorNormalCompletion5 = true;
             var _didIteratorError5 = false;
             var _iteratorError5 = undefined;
 
             try {
-                for (var _iterator5 = (0, _getIterator3.default)((0, _keys2.default)(newElementTemplate.attrs)), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+                for (var _iterator5 = (0, _getIterator3.default)((0, _keys2.default)(newTemplate.attrs)), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
                     var newAttrName = _step5.value;
 
-                    var oldAttrValue = oldElementTemplate.attrs[newAttrName];
-                    var newAttrValue = newElementTemplate.attrs[newAttrName];
+                    var oldAttrValue = oldTemplate.attrs[newAttrName];
+                    var newAttrValue = newTemplate.attrs[newAttrName];
                     if (newAttrValue !== oldAttrValue) {
                         element.setAttribute(newAttrName, newAttrValue);
                     }
@@ -320,12 +270,12 @@ var Shapedom = function () {
                 }
             }
 
-            this.__templates.set(element, newElementTemplate);
-            // Structure of newElementTemplate is the same as oldElementTemplate's,
-            // so newElementTemplate.children.length === oldElementTemplate.children.length
-            // and newElementTemplate.children[i].uuid === oldElementTemplate.children[i].uuid
-            var oldChildren = oldElementTemplate.children;
-            var newChildren = newElementTemplate.children;
+            this.__templates.set(element, newTemplate);
+            // Structure of newTemplate is the same as oldTemplate's,
+            // so newTemplate.children.length === oldTemplate.children.length
+            // and newTemplate.children[i].uuid === oldTemplate.children[i].uuid
+            var oldChildren = oldTemplate.children;
+            var newChildren = newTemplate.children;
             for (var i = 0; i < oldChildren.length; ++i) {
                 var newChildTemplate = newChildren[i];
                 var childNode = element.childNodes[i]; // TODO: Refactor
@@ -336,8 +286,8 @@ var Shapedom = function () {
     }, {
         key: '__updateChildren',
         value: function __updateChildren(element, newChildren) {
-            var elementTemplate = this.__templates.get(element);
-            var oldChildren = elementTemplate.children;
+            var template = this.__templates.get(element);
+            var oldChildren = template.children;
             var childrenToUpdate = Math.min(oldChildren.length, newChildren.length);
             for (var i = 0; i < childrenToUpdate; ++i) {
                 var newChildTemplate = newChildren[i];
@@ -360,17 +310,17 @@ var Shapedom = function () {
         }
     }, {
         key: '__updateElementByElementDifferentTemplateSameTag',
-        value: function __updateElementByElementDifferentTemplateSameTag(element, newElementTemplate) {
-            var oldElementTemplate = this.__templates.get(element);
+        value: function __updateElementByElementDifferentTemplateSameTag(element, newTemplate) {
+            var oldTemplate = this.__templates.get(element);
             var _iteratorNormalCompletion6 = true;
             var _didIteratorError6 = false;
             var _iteratorError6 = undefined;
 
             try {
-                for (var _iterator6 = (0, _getIterator3.default)((0, _keys2.default)(oldElementTemplate.attrs)), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
+                for (var _iterator6 = (0, _getIterator3.default)((0, _keys2.default)(oldTemplate.attrs)), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
                     var oldAttrName = _step6.value;
 
-                    var newAttrValue = newElementTemplate.attrs[oldAttrName];
+                    var newAttrValue = newTemplate.attrs[oldAttrName];
                     if (!newAttrValue) {
                         element.removeAttribute(oldAttrName);
                     }
@@ -395,11 +345,11 @@ var Shapedom = function () {
             var _iteratorError7 = undefined;
 
             try {
-                for (var _iterator7 = (0, _getIterator3.default)((0, _keys2.default)(newElementTemplate.attrs)), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
+                for (var _iterator7 = (0, _getIterator3.default)((0, _keys2.default)(newTemplate.attrs)), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
                     var newAttrName = _step7.value;
 
-                    var oldAttrValue = oldElementTemplate.attrs[newAttrName];
-                    var newAttrValue = newElementTemplate.attrs[newAttrName];
+                    var oldAttrValue = oldTemplate.attrs[newAttrName];
+                    var newAttrValue = newTemplate.attrs[newAttrName];
                     if (newAttrValue !== oldAttrValue) {
                         element.setAttribute(newAttrName, newAttrValue);
                     }
@@ -419,30 +369,30 @@ var Shapedom = function () {
                 }
             }
 
-            var newChildren = newElementTemplate.children;
+            var newChildren = newTemplate.children;
             this.__updateChildren(element, newChildren);
-            this.__templates.set(element, newElementTemplate);
+            this.__templates.set(element, newTemplate);
             return element;
         }
     }, {
         key: '__updateElementByElementDifferentTemplateDifferentTag',
-        value: function __updateElementByElementDifferentTemplateDifferentTag(element, newElementTemplate) {
-            var oldElementTemplate = this.__templates.get(element);
+        value: function __updateElementByElementDifferentTemplateDifferentTag(element, newTemplate) {
+            var oldTemplate = this.__templates.get(element);
             this.__removeChildren(element);
             this.__templates.delete(element);
-            var newElement = this.__createElement(newElementTemplate);
+            var newElement = this.__createElement(newTemplate);
             var parent = element.parentNode;
             parent.replaceChild(newElement, element);
             return newElement;
         }
     }, {
         key: '__updateElementByElementDifferentTemplate',
-        value: function __updateElementByElementDifferentTemplate(element, newElementTemplate) {
-            var oldElementTemplate = this.__templates.get(element);
-            if (newElementTemplate.tag === oldElementTemplate.tag) {
-                return this.__updateElementByElementDifferentTemplateSameTag(element, newElementTemplate);
+        value: function __updateElementByElementDifferentTemplate(element, newTemplate) {
+            var oldTemplate = this.__templates.get(element);
+            if (newTemplate.tag === oldTemplate.tag) {
+                return this.__updateElementByElementDifferentTemplateSameTag(element, newTemplate);
             } else {
-                return this.__updateElementByElementDifferentTemplateDifferentTag(element, newElementTemplate);
+                return this.__updateElementByElementDifferentTemplateDifferentTag(element, newTemplate);
             }
         }
     }, {
@@ -452,31 +402,21 @@ var Shapedom = function () {
             if (newTemplate === oldTemplate) {
                 return node;
             }
-            if (newTemplate.uuid === oldTemplate.uuid) {
-                if (oldTemplate instanceof TextTemplate && newTemplate instanceof TextTemplate) {
-                    return this.__updateTextByText(node, newTemplate);
-                } else if (oldTemplate instanceof ElementTemplate && newTemplate instanceof ElementTemplate) {
-                    return this.__updateElementByElementSameTemplate(node, newTemplate);
-                } else {
-                    throw new Error('Invalid template types.');
-                }
-            } else {
-                if (oldTemplate instanceof TextTemplate) {
-                    if (newTemplate instanceof TextTemplate) {
-                        return this.__updateTextByText(node, newTemplate);
-                    } else if (newTemplate instanceof ElementTemplate) {
-                        return this.__updateTextByElement(node, newTemplate);
+            if (oldTemplate instanceof Template) {
+                if (newTemplate instanceof Template) {
+                    if (newTemplate.uuid === oldTemplate.uuid) {
+                        return this.__updateElementByElementSameTemplate(node, newTemplate);
                     } else {
-                        throw new Error('Invalid template types.');
-                    }
-                } else if (oldTemplate instanceof ElementTemplate) {
-                    if (newTemplate instanceof TextTemplate) {
-                        return this.__updateElementByText(node, newTemplate);
-                    } else if (newTemplate instanceof ElementTemplate) {
                         return this.__updateElementByElementDifferentTemplate(node, newTemplate);
-                    } else {
-                        throw new Error('Invalid template types.');
                     }
+                } else if (typeof newTemplate === 'string' || newTemplate instanceof String) {
+                    return this.__updateElementByText(node, newTemplate);
+                }
+            } else if (typeof oldTemplate === 'string' || oldTemplate instanceof String) {
+                if (newTemplate instanceof Template) {
+                    return this.__updateTextByElement(node, newTemplate);
+                } else if (typeof newTemplate === 'string' || newTemplate instanceof String) {
+                    return this.__updateTextByText(node, newTemplate);
                 }
             }
         }

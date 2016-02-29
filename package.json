@@ -1,6 +1,6 @@
 {
   "name": "shapedom",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "license": "MIT",
 
   "description": "Static-as-possible virtual DOM JavaScript library.",

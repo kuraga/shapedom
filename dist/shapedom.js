@@ -3,99 +3,82 @@
 const uuid = require('an-uuid');
 export class Template {
 }
-export class ElementTemplate extends Template {
-}
-export class TextTemplate extends Template {
-}
 export default class Shapedom {
     constructor(document) {
         this.document = document;
         this.__templates = new WeakMap();
     }
-    __createTextTemplate(shape) {
-        const template = new TextTemplate();
-        template.uuid = uuid();
-        template.text = shape.text;
-        return template;
-    }
-    __createElementTemplate(shape) {
-        const template = new ElementTemplate();
-        template.uuid = uuid();
-        template.tag = shape.tag;
-        template.attrs = Object.assign({}, shape.attrs);
-        template.children = [];
-        if ('children' in shape) {
-            for (const childShape of shape.children) {
-                const childTemplate = this.createTemplate(childShape);
-                template.children.push(childTemplate);
-            }
-        }
-        return template;
-    }
-    createTemplate(shape) {
-        if (shape.text !== undefined) {
-            return this.__createTextTemplate(shape);
-        }
-        else if (shape.tag !== undefined) {
-            return this.__createElementTemplate(shape);
+    createTemplate(shapeOrString) {
+        if (typeof shapeOrString === 'string' || shapeOrString instanceof String) {
+            return shapeOrString;
         }
         else {
-            throw new Error(`Invalid shape type`);
+            const template = new Template();
+            template.uuid = uuid();
+            template.tag = shapeOrString.tag;
+            template.attrs = Object.assign({}, shapeOrString.attrs);
+            template.children = [];
+            if ('children' in shapeOrString) {
+                for (let childShape of shapeOrString.children) {
+                    const childTemplate = this.createTemplate(childShape);
+                    template.children.push(childTemplate);
+                }
+            }
+            return template;
         }
     }
-    __createText(textTemplate) {
-        const textNode = this.document.createTextNode(textTemplate.text);
-        this.__templates.set(textNode, textTemplate);
+    __createText(text) {
+        const textNode = this.document.createTextNode(text);
+        this.__templates.set(textNode, text);
         return textNode;
     }
-    __createElement(elementTemplate) {
-        const element = this.document.createElement(elementTemplate.tag);
-        for (const attrName of Object.keys(elementTemplate.attrs)) {
-            const attrValue = elementTemplate.attrs[attrName];
+    __createElement(template) {
+        const element = this.document.createElement(template.tag);
+        for (let attrName of Object.keys(template.attrs)) {
+            const attrValue = template.attrs[attrName];
             element.setAttribute(attrName, attrValue);
         }
-        for (const child of elementTemplate.children) {
+        for (let child of template.children) {
             const childElement = this.__createNode(child);
             element.appendChild(childElement);
         }
-        this.__templates.set(element, elementTemplate);
+        this.__templates.set(element, template);
         return element;
     }
-    __createNode(template) {
-        if (template instanceof TextTemplate) {
-            return this.__createText(template);
+    __createNode(templateOrString) {
+        if (typeof templateOrString === 'string' || templateOrString instanceof String) {
+            return this.__createText(templateOrString);
         }
-        else if (template instanceof ElementTemplate) {
-            return this.__createElement(template);
+        else if (templateOrString instanceof Template) {
+            return this.__createElement(templateOrString);
         }
         else {
             throw new Error(`Invalid template type`);
         }
     }
-    __updateTextByText(textNode, newTextTemplate) {
-        const oldTextTemplate = this.__templates.get(textNode);
-        if (newTextTemplate.text === oldTextTemplate.text) {
+    __updateTextByText(textNode, newText) {
+        const oldText = this.__templates.get(textNode);
+        if (newText === oldText) {
             return textNode;
         }
         this.__templates.delete(textNode);
-        const newTextNode = this.__createText(newTextTemplate);
+        const newTextNode = this.__createText(newText);
         const parent = textNode.parentNode;
         parent.replaceChild(newTextNode, textNode);
-        this.__templates.set(newTextNode, newTextTemplate);
+        this.__templates.set(newTextNode, newText);
         return newTextNode;
     }
-    __updateTextByElement(textNode, newElementTemplate) {
-        const oldTextTemplate = this.__templates.get(textNode);
+    __updateTextByElement(textNode, newTemplate) {
         this.__templates.delete(textNode);
-        const newElement = this.__createElement(newElementTemplate);
+        const newElement = this.__createElement(newTemplate);
         const parent = textNode.parentNode;
         parent.replaceChild(newElement, textNode);
         return newElement;
     }
-    __updateElementByText(element, newTextTemplate) {
+    __updateElementByText(element, newText) {
         this.__removeChildren(element);
         this.__templates.delete(element);
-        const newTextNode = this.__createText(newTextTemplate);
+        const newTextNode = this.__createText(newText);
         const parent = element.parentNode;
         parent.replaceChild(newTextNode, element);
         return newTextNode;
@@ -106,29 +89,29 @@ export default class Shapedom {
         this.__templates.delete(node);
     }
     __removeChildren(node) {
-        for (const childNode of node.childNodes) {
+        for (let childNode of node.childNodes) {
             this.__removeNode(childNode);
         }
     }
-    __updateElementByElementSameTemplate(element, newElementTemplate) {
-        const oldElementTemplate = this.__templates.get(element);
-        // Structure of newElementTemplate is the same as oldElementTemplate's,
-        // so newElementTemplate.tag === oldElementTemplate.tag
-        // Structure of newElementTemplate is the same as oldTemplate's,
-        // so newElementTemplate.attrs === oldElementTemplate.attrs
-        for (const newAttrName of Object.keys(newElementTemplate.attrs)) {
-            const oldAttrValue = oldElementTemplate.attrs[newAttrName];
-            const newAttrValue = newElementTemplate.attrs[newAttrName];
+    __updateElementByElementSameTemplate(element, newTemplate) {
+        const oldTemplate = this.__templates.get(element);
+        // Structure of newTemplate is the same as oldTemplate's,
+        // so newTemplate.tag === oldTemplate.tag
+        // Structure of newTemplate is the same as oldTemplate's,
+        // so newTemplate.attrs === oldTemplate.attrs
+        for (let newAttrName of Object.keys(newTemplate.attrs)) {
+            const oldAttrValue = oldTemplate.attrs[newAttrName];
+            const newAttrValue = newTemplate.attrs[newAttrName];
             if (newAttrValue !== oldAttrValue) {
                 element.setAttribute(newAttrName, newAttrValue);
             }
         }
-        this.__templates.set(element, newElementTemplate);
-        // Structure of newElementTemplate is the same as oldElementTemplate's,
-        // so newElementTemplate.children.length === oldElementTemplate.children.length
-        // and newElementTemplate.children[i].uuid === oldElementTemplate.children[i].uuid
-        const oldChildren = oldElementTemplate.children;
-        const newChildren = newElementTemplate.children;
+        this.__templates.set(element, newTemplate);
+        // Structure of newTemplate is the same as oldTemplate's,
+        // so newTemplate.children.length === oldTemplate.children.length
+        // and newTemplate.children[i].uuid === oldTemplate.children[i].uuid
+        const oldChildren = oldTemplate.children;
+        const newChildren = newTemplate.children;
         for (let i = 0; i < oldChildren.length; ++i) {
             const newChildTemplate = newChildren[i];
             const childNode = element.childNodes[i]; // TODO: Refactor
@@ -137,8 +120,8 @@ export default class Shapedom {
         return element;
     }
     __updateChildren(element, newChildren) {
-        const elementTemplate = this.__templates.get(element);
-        const oldChildren = elementTemplate.children;
+        const template = this.__templates.get(element);
+        const oldChildren = template.children;
         const childrenToUpdate = Math.min(oldChildren.length, newChildren.length);
         for (let i = 0; i < childrenToUpdate; ++i) {
             const newChildTemplate = newChildren[i];
@@ -160,42 +143,42 @@ export default class Shapedom {
         }
         return element.childNodes;
     }
-    __updateElementByElementDifferentTemplateSameTag(element, newElementTemplate) {
-        const oldElementTemplate = this.__templates.get(element);
-        for (const oldAttrName of Object.keys(oldElementTemplate.attrs)) {
-            const newAttrValue = newElementTemplate.attrs[oldAttrName];
+    __updateElementByElementDifferentTemplateSameTag(element, newTemplate) {
+        const oldTemplate = this.__templates.get(element);
+        for (let oldAttrName of Object.keys(oldTemplate.attrs)) {
+            const newAttrValue = newTemplate.attrs[oldAttrName];
             if (!newAttrValue) {
                 element.removeAttribute(oldAttrName);
             }
         }
-        for (const newAttrName of Object.keys(newElementTemplate.attrs)) {
-            const oldAttrValue = oldElementTemplate.attrs[newAttrName];
-            const newAttrValue = newElementTemplate.attrs[newAttrName];
+        for (let newAttrName of Object.keys(newTemplate.attrs)) {
+            const oldAttrValue = oldTemplate.attrs[newAttrName];
+            const newAttrValue = newTemplate.attrs[newAttrName];
             if (newAttrValue !== oldAttrValue) {
                 element.setAttribute(newAttrName, newAttrValue);
             }
         }
-        const newChildren = newElementTemplate.children;
+        const newChildren = newTemplate.children;
         this.__updateChildren(element, newChildren);
-        this.__templates.set(element, newElementTemplate);
+        this.__templates.set(element, newTemplate);
         return element;
     }
-    __updateElementByElementDifferentTemplateDifferentTag(element, newElementTemplate) {
-        const oldElementTemplate = this.__templates.get(element);
+    __updateElementByElementDifferentTemplateDifferentTag(element, newTemplate) {
+        const oldTemplate = this.__templates.get(element);
         this.__removeChildren(element);
         this.__templates.delete(element);
-        const newElement = this.__createElement(newElementTemplate);
+        const newElement = this.__createElement(newTemplate);
         const parent = element.parentNode;
         parent.replaceChild(newElement, element);
         return newElement;
     }
-    __updateElementByElementDifferentTemplate(element, newElementTemplate) {
-        const oldElementTemplate = this.__templates.get(element);
-        if (newElementTemplate.tag === oldElementTemplate.tag) {
-            return this.__updateElementByElementDifferentTemplateSameTag(element, newElementTemplate);
+    __updateElementByElementDifferentTemplate(element, newTemplate) {
+        const oldTemplate = this.__templates.get(element);
+        if (newTemplate.tag === oldTemplate.tag) {
+            return this.__updateElementByElementDifferentTemplateSameTag(element, newTemplate);
         }
         else {
-            return this.__updateElementByElementDifferentTemplateDifferentTag(element, newElementTemplate);
+            return this.__updateElementByElementDifferentTemplateDifferentTag(element, newTemplate);
         }
     }
     __updateNode(node, newTemplate) {
@@ -203,39 +186,25 @@ export default class Shapedom {
         if (newTemplate === oldTemplate) {
             return node;
         }
-        if (newTemplate.uuid === oldTemplate.uuid) {
-            if (oldTemplate instanceof TextTemplate && newTemplate instanceof TextTemplate) {
-                return this.__updateTextByText(node, newTemplate);
-            }
-            else if (oldTemplate instanceof ElementTemplate && newTemplate instanceof ElementTemplate) {
-                return this.__updateElementByElementSameTemplate(node, newTemplate);
-            }
-            else {
-                throw new Error(`Invalid template types.`);
-            }
-        }
-        else {
-            if (oldTemplate instanceof TextTemplate) {
-                if (newTemplate instanceof TextTemplate) {
-                    return this.__updateTextByText(node, newTemplate);
-                }
-                else if (newTemplate instanceof ElementTemplate) {
-                    return this.__updateTextByElement(node, newTemplate);
+        if (oldTemplate instanceof Template) {
+            if (newTemplate instanceof Template) {
+                if (newTemplate.uuid === oldTemplate.uuid) {
+                    return this.__updateElementByElementSameTemplate(node, newTemplate);
                 }
                 else {
-                    throw new Error(`Invalid template types.`);
-                }
-            }
-            else if (oldTemplate instanceof ElementTemplate) {
-                if (newTemplate instanceof TextTemplate) {
-                    return this.__updateElementByText(node, newTemplate);
-                }
-                else if (newTemplate instanceof ElementTemplate) {
                     return this.__updateElementByElementDifferentTemplate(node, newTemplate);
                 }
-                else {
-                    throw new Error(`Invalid template types.`);
-                }
+            }
+            else if (typeof newTemplate === 'string' || newTemplate instanceof String) {
+                return this.__updateElementByText(node, newTemplate);
+            }
+        }
+        else if (typeof oldTemplate === 'string' || oldTemplate instanceof String) {
+            if (newTemplate instanceof Template) {
+                return this.__updateTextByElement(node, newTemplate);
+            }
+            else if (typeof newTemplate === 'string' || newTemplate instanceof String) {
+                return this.__updateTextByText(node, newTemplate);
             }
         }
     }
