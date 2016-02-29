@@ -1,6 +1,6 @@
 import test from 'tapes';
 
-import Shapedom, { TextTemplate } from '../../dist/shapedom';
+import Shapedom from '../../dist/shapedom';
 
 test('shapedom.createTemplate with text shape', function (t) {
   let shapedom;
@@ -12,11 +12,9 @@ test('shapedom.createTemplate with text shape', function (t) {
   });
 
   t.test('text shape', function (t) {
-    let result = shapedom.createTemplate({
-      text: 'hi there'
-    });
+    let result = shapedom.createTemplate('hi there');
 
-    t.assert(result instanceof TextTemplate);
+    t.assert(typeof result === 'string');
 
     t.end();
   });

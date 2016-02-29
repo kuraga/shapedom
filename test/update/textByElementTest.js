@@ -1,10 +1,10 @@
 import test from 'tapes';
 
-import Shapedom from '../../../../dist/shapedom';
+import Shapedom from '../../dist/shapedom';
 
 test('shapedom.update text template by element template', function (t) {
   let shapedom;
-  let textTemplate, clonedTextTemplate;
+  let textTemplate;
   let textNode, root;
 
   t.beforeEach(function (t) {
@@ -12,9 +12,7 @@ test('shapedom.update text template by element template', function (t) {
 
     root = document.createElement('div');
 
-    textTemplate = shapedom.createTemplate({
-      text: 'hi there'
-    });
+    textTemplate = shapedom.createTemplate('hi there');
     textNode = shapedom.render(textTemplate);
     root.appendChild(textNode);
 
@@ -34,15 +32,9 @@ test('shapedom.update text template by element template', function (t) {
           attrs: {
             class: 'content'
           },
-          children: [
-            {
-              text: 'some text'
-            }
-          ]
+          children: ['some text']
         },
-        {
-          text: 'another text'
-        }
+        'another text'
       ]
     });
 

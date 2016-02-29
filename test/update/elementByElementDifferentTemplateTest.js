@@ -1,7 +1,7 @@
 import test from 'tapes';
 import clone from 'clone';
 
-import Shapedom from '../../../../dist/shapedom';
+import Shapedom from '../../dist/shapedom';
 
 test('shapedom.update element template by same template', function (t) {
   let shapedom;
@@ -26,15 +26,9 @@ test('shapedom.update element template by same template', function (t) {
           attrs: {
             class: 'content'
           },
-          children: [
-            {
-              text: 'some text'
-            }
-          ]
+          children: ['some text']
         },
-        {
-          text: 'another text'
-        }
+        'another text'
       ]
     };
     elementTemplate = shapedom.createTemplate(elementShape);
@@ -139,7 +133,7 @@ test('shapedom.update element template by same template', function (t) {
 
   t.test('child changed', function (t) {
     t.test('child\'s text changed', function (t) {
-      clonedElementShape.children[1].text = 'another helpful text';
+      clonedElementShape.children[1] = 'another helpful text';
       let anotherElementTemplate = shapedom.createTemplate(clonedElementShape);
 
       let result = shapedom.update(elementNode, anotherElementTemplate);
@@ -224,11 +218,7 @@ test('shapedom.update element template by same template', function (t) {
       clonedElementShape.children.push({
         tag: 'span',
         attrs: {},
-        children: [
-          {
-            text: 'additional text'
-          }
-        ]
+        children: ['additional text']
       });
       let anotherElementTemplate = shapedom.createTemplate(clonedElementShape);
 
@@ -269,11 +259,7 @@ test('shapedom.update element template by same template', function (t) {
       clonedElementShape.children.push({
         tag: 'span',
         attrs: {},
-        children: [
-          {
-            text: 'additional text'
-          }
-        ]
+        children: ['additional text']
       });
       let anotherElementTemplate = shapedom.createTemplate(clonedElementShape);
 
@@ -289,11 +275,7 @@ test('shapedom.update element template by same template', function (t) {
       clonedElementShape.children[0].children[0] = {
         tag: 'span',
         attrs: {},
-        children: [
-          {
-            text: 'total new text'
-          }
-        ]
+        children: ['total new text']
       };
       let anotherElementTemplate = shapedom.createTemplate(clonedElementShape);
 

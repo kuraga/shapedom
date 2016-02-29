@@ -1,6 +1,6 @@
 import test from 'tapes';
 
-import Shapedom, { ElementTemplate } from '../../dist/shapedom';
+import Shapedom, { Template } from '../../dist/shapedom';
 
 test('shapedom.createTemplate with element shape', function (t) {
   let shapedom;
@@ -20,7 +20,7 @@ test('shapedom.createTemplate with element shape', function (t) {
       }
     });
 
-    t.assert(result instanceof ElementTemplate);
+    t.assert(result instanceof Template);
 
     t.end();
   });
@@ -33,20 +33,16 @@ test('shapedom.createTemplate with element shape', function (t) {
         class: 'someClass anotherClass'
       },
       children: [
-        {
-          text: 'header'
-        },
+        'header',
         {
           tag: 'span',
           attrs: {}
         },
-        {
-          text: 'footer'
-        }
+        'footer'
       ]
     });
 
-    t.assert(result instanceof ElementTemplate);
+    t.assert(result instanceof Template);
 
     t.end();
   });

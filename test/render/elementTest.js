@@ -54,18 +54,14 @@ test('shapedom.render a new element template', function (t) {
         class: 'someClass anotherClass'
       },
       children: [
-        {
-          text: 'header'
-        },
+        'header',
         {
           tag: 'span',
           attrs: {
             class: 'content'
           }
         },
-        {
-          text: 'footer'
-        }
+        'footer'
       ]
     });
 

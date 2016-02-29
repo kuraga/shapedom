@@ -1,6 +1,6 @@
 import test from 'tapes';
 
-import Shapedom from '../../../../dist/shapedom';
+import Shapedom from '../../dist/shapedom';
 
 test('shapedom.update element template by text template', function (t) {
   let shapedom;
@@ -18,11 +18,7 @@ test('shapedom.update element template by text template', function (t) {
         id: 'box123',
         class: 'box cube'
       },
-      children: [
-        {
-          text: 'content'
-        }
-      ]
+      children: ['content']
     });
     elementNode = shapedom.render(elementTemplate);
     root.appendChild(elementNode);
@@ -31,9 +27,7 @@ test('shapedom.update element template by text template', function (t) {
   });
 
   t.test('non-empty text', function (t) {
-    let textTemplate = shapedom.createTemplate({
-      text: 'hi there'
-    });
+    let textTemplate = shapedom.createTemplate('hi there');
 
     let result = shapedom.update(elementNode, textTemplate);
 

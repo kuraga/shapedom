@@ -1,10 +1,10 @@
 import test from 'tapes';
 
-import Shapedom from '../../../../dist/shapedom';
+import Shapedom from '../../dist/shapedom';
 
-test('shapedom.update text template by different text template', function (t) {
+test('shapedom.update text by text', function (t) {
   let shapedom;
-  let textTemplate, clonedTextTemplate;
+  let text;
   let textNode, root;
 
   t.beforeEach(function (t) {
@@ -12,19 +12,15 @@ test('shapedom.update text template by different text template', function (t) {
 
     root = document.createElement('div');
 
-    textTemplate = shapedom.createTemplate({
-      text: 'hi there'
-    });
-    textNode = shapedom.render(textTemplate);
+    text = shapedom.createTemplate('hi there');
+    textNode = shapedom.render(text);
     root.appendChild(textNode);
 
     t.end();
   });
 
   t.test('with the same text', function (t) {
-    let anotherTextTemplate = shapedom.createTemplate({
-      text: 'hi there'
-    });
+    let anotherTextTemplate = shapedom.createTemplate('hi there');
 
     let result = shapedom.update(textNode, anotherTextTemplate);
 
@@ -36,9 +32,7 @@ test('shapedom.update text template by different text template', function (t) {
   });
 
   t.test('with another text', function (t) {
-    let anotherTextTemplate = shapedom.createTemplate({
-      text: 'new text'
-    });
+    let anotherTextTemplate = shapedom.createTemplate('new text');
 
     let result = shapedom.update(textNode, anotherTextTemplate);
 

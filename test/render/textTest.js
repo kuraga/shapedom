@@ -12,9 +12,7 @@ test('shapedom.render a new text template', function (t) {
   });
 
   t.test('non-empty text', function (t) {
-    let textTemplate = shapedom.createTemplate({
-      text: 'hi there'
-    });
+    let textTemplate = shapedom.createTemplate('hi there');
 
     let result = shapedom.render(textTemplate);
 
@@ -25,9 +23,7 @@ test('shapedom.render a new text template', function (t) {
   });
 
   t.test('empty text', function (t) {
-    let textTemplate = shapedom.createTemplate({
-      text: ''
-    });
+    let textTemplate = shapedom.createTemplate('');
 
     let result = shapedom.render(textTemplate);
 

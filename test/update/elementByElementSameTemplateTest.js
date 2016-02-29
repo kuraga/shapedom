@@ -1,7 +1,7 @@
 import test from 'tapes';
-import cloneTemplate from '../../helpers/cloneTemplate';
+import cloneTemplate from '../helpers/cloneTemplate';
 
-import Shapedom from '../../../dist/shapedom';
+import Shapedom from '../../dist/shapedom';
 
 test('shapedom.update element template by same template', function (t) {
   let shapedom;
@@ -25,15 +25,9 @@ test('shapedom.update element template by same template', function (t) {
           attrs: {
             class: 'content'
           },
-          children: [
-            {
-              text: 'some text'
-            }
-          ]
+          children: ['some text']
         },
-        {
-          text: 'another text'
-        }
+        'another text'
       ]
     });
     elementNode = shapedom.render(elementTemplate);
@@ -82,7 +76,7 @@ test('shapedom.update element template by same template', function (t) {
 
   t.test('child changed', function (t) {
     t.test('child\'s text changed', function (t) {
-      clonedElementTemplate.children[1].text = 'another helpful text';
+      clonedElementTemplate.children[1] = 'another helpful text';
 
       let result = shapedom.update(elementNode, clonedElementTemplate);
 
@@ -106,7 +100,7 @@ test('shapedom.update element template by same template', function (t) {
     });
 
     t.test('child\'s child changed', function (t) {
-      clonedElementTemplate.children[0].children[0].text = 'total new text';
+      clonedElementTemplate.children[0].children[0] = 'total new text';
 
       let result = shapedom.update(elementNode, clonedElementTemplate);
 

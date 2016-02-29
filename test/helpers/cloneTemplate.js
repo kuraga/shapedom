@@ -1,23 +1,19 @@
-import {
-  TextTemplate, ElementTemplate
-} from '../../dist/shapedom';
+import { Template } from '../../dist/shapedom';
 
-export default function cloneTemplate(template) {
-  let clonedTemplate;
+export default function cloneTemplate(templateOrString) {
+  if (typeof templateOrString === 'string' || templateOrString instanceof String) {
+    return templateOrString;
+  } else if (templateOrString instanceof Template) {
+    let clonedTemplate = new Template();
 
-  if (template instanceof TextTemplate) {
-    clonedTemplate = new TextTemplate();
-    clonedTemplate.text = template.text;
-  } else if (template instanceof ElementTemplate) {
-    clonedTemplate = new ElementTemplate();
-    clonedTemplate.tag = template.tag;
-    clonedTemplate.attrs = Object.assign({}, template.attrs);
-    clonedTemplate.children = template.children.map((child) => ( cloneTemplate(child) ));
+    clonedTemplate.uuid = templateOrString.uuid;
+    clonedTemplate.tag = templateOrString.tag;
+    clonedTemplate.attrs = Object.assign({}, templateOrString.attrs);
+
+    clonedTemplate.children = templateOrString.children.map((child) => ( cloneTemplate(child) ));
+
+    return clonedTemplate;
   } else {
     throw new Error(`Invalid template type.`);
   }
-
-  clonedTemplate.uuid = template.uuid;
-
-  return clonedTemplate;
 }
