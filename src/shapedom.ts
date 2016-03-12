@@ -28,7 +28,7 @@ export class Template {
 
 
 export class Variable {
-  private __value: string;
+  protected __value: string;
 
   constructor(value: string) {
     this.set(value);
@@ -56,7 +56,7 @@ function __getStringFromStringOrVariable(stringOrVariable: string | Variable): s
 
 export default class Shapedom {
   document: Document;
-  private __templates: WeakMap<Node, Template | string>;
+  protected __templates: WeakMap<Node, Template | string>;
 
   constructor(document: Document) {
     this.document = document;
@@ -86,7 +86,7 @@ export default class Shapedom {
     }
   }
 
-  __createText(textOrVariable: string | Variable): Text {
+  protected __createText(textOrVariable: string | Variable): Text {
     const text: string = __getStringFromStringOrVariable(textOrVariable);
 
     const textNode: Text = this.document.createTextNode(text);
@@ -96,7 +96,7 @@ export default class Shapedom {
     return textNode;
   }
 
-  __createElement(template: Template): Element {
+  protected __createElement(template: Template): Element {
     const element: Element = this.document.createElement(template.tag);
 
     for (const attrName of Object.keys(template.attrs)) {
@@ -114,7 +114,7 @@ export default class Shapedom {
     return element;
   }
 
-  __createNode(templateOrStringOrVariable: Template | string | Variable): Node {
+  protected __createNode(templateOrStringOrVariable: Template | string | Variable): Node {
     if (typeof templateOrStringOrVariable === 'string' || templateOrStringOrVariable instanceof String || templateOrStringOrVariable instanceof Variable) {
       return this.__createText(templateOrStringOrVariable);
     } else if (templateOrStringOrVariable instanceof Template) {
@@ -124,7 +124,7 @@ export default class Shapedom {
     }
   }
 
-  __updateTextByText(textNode: Text, newTextStringOrVariable: string | Variable): Text {
+  protected __updateTextByText(textNode: Text, newTextStringOrVariable: string | Variable): Text {
     const oldText = this.__templates.get(textNode);
     const newText = __getStringFromStringOrVariable(newTextStringOrVariable);
 
@@ -144,7 +144,7 @@ export default class Shapedom {
     return newTextNode;
   }
 
-  __updateTextByElement(textNode: Text, newTemplate: Template): Element {
+  protected __updateTextByElement(textNode: Text, newTemplate: Template): Element {
     this.__templates.delete(textNode);
 
     const newElement = this.__createElement(newTemplate);
@@ -155,7 +155,7 @@ export default class Shapedom {
     return newElement;
   }
 
-  __updateElementByText(element: Element, newTextStringOrVariable: string | Variable): Text {
+  protected __updateElementByText(element: Element, newTextStringOrVariable: string | Variable): Text {
     const newText = __getStringFromStringOrVariable(newTextStringOrVariable);
 
     this.__removeChildren(element);
@@ -169,7 +169,7 @@ export default class Shapedom {
     return newTextNode;
   }
 
-  __removeNode(node: Node): void {
+  protected __removeNode(node: Node): void {
     const parent = node.parentNode;
 
     parent.removeChild(node);
@@ -177,13 +177,13 @@ export default class Shapedom {
     this.__templates.delete(node);
   }
 
-  __removeChildren(node: Node): void {
+  protected __removeChildren(node: Node): void {
     for (const childNode of node.childNodes) {
       this.__removeNode(childNode);
     }
   }
 
-  __updateElementByElementSameTemplate(element: Element, newTemplate: Template): Element {
+  protected __updateElementByElementSameTemplate(element: Element, newTemplate: Template): Element {
     const oldTemplate = <Template> this.__templates.get(element);
 
     // Structure of newTemplate is the same as oldTemplate's,
@@ -216,7 +216,7 @@ export default class Shapedom {
     return element;
   }
 
-  __updateChildren(element: Element, newChildren: (Template | string | Variable)[]): NodeList {
+  protected __updateChildren(element: Element, newChildren: (Template | string | Variable)[]): NodeList {
     const template = <Template> this.__templates.get(element);
     const oldChildren = template.children;
 
@@ -243,7 +243,7 @@ export default class Shapedom {
     return element.childNodes;
   }
 
-  __updateElementByElementDifferentTemplateSameTag(element: Element, newTemplate: Template): Element {
+  protected __updateElementByElementDifferentTemplateSameTag(element: Element, newTemplate: Template): Element {
     const oldTemplate = <Template> this.__templates.get(element);
 
     for (const oldAttrName of Object.keys(oldTemplate.attrs)) {
@@ -269,7 +269,7 @@ export default class Shapedom {
     return element;
   }
 
-  __updateElementByElementDifferentTemplateDifferentTag(element: Element, newTemplate: Template): Element {
+  protected __updateElementByElementDifferentTemplateDifferentTag(element: Element, newTemplate: Template): Element {
     const oldTemplate = this.__templates.get(element);
 
     this.__removeChildren(element);
@@ -284,7 +284,7 @@ export default class Shapedom {
     return newElement;
   }
 
-  __updateElementByElementDifferentTemplate(element: Element, newTemplate: Template): Element {
+  protected __updateElementByElementDifferentTemplate(element: Element, newTemplate: Template): Element {
     const oldTemplate = <Template> this.__templates.get(element);
 
     if (newTemplate.tag === oldTemplate.tag) {
@@ -294,7 +294,7 @@ export default class Shapedom {
     }
   }
 
-  __updateNode(node: Node, newTemplate: Template | string | Variable): Node {
+  protected __updateNode(node: Node, newTemplate: Template | string | Variable): Node {
     const oldTemplate = this.__templates.get(node);
 
     if (newTemplate === oldTemplate) {
