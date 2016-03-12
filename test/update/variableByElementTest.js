@@ -4,7 +4,7 @@ import Shapedom, { Variable } from '../../dist/shapedom';
 
 test('shapedom.update variable template by element template', function (t) {
   let shapedom;
-  let variable;
+  let variableTemplate;
   let variableNode, root;
 
   t.beforeEach(function (t) {
@@ -12,8 +12,8 @@ test('shapedom.update variable template by element template', function (t) {
 
     root = document.createElement('div');
 
-    variable = shapedom.createTemplate(new Variable('hi there'));
-    variableNode = shapedom.render(variable);
+    variableTemplate = shapedom.createTemplate(new Variable('hi there'));
+    variableNode = shapedom.render(variableTemplate);
     root.appendChild(variableNode);
 
     t.end();

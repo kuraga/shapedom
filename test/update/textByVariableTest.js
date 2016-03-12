@@ -2,9 +2,9 @@ import test from 'tapes';
 
 import Shapedom, { Variable } from '../../dist/shapedom';
 
-test('shapedom.update text by variable', function (t) {
+test('shapedom.update text template by variable template', function (t) {
   let shapedom;
-  let text;
+  let textTemplate;
   let textNode, root;
 
   t.beforeEach(function (t) {
@@ -12,8 +12,8 @@ test('shapedom.update text by variable', function (t) {
 
     root = document.createElement('div');
 
-    text = shapedom.createTemplate('hi there');
-    textNode = shapedom.render(text);
+    textTemplate = shapedom.createTemplate('hi there');
+    textNode = shapedom.render(textTemplate);
     root.appendChild(textNode);
 
     t.end();

@@ -2,9 +2,9 @@ import test from 'tapes';
 
 import Shapedom, { Variable } from '../../dist/shapedom';
 
-test('shapedom.update variable by variable', function (t) {
+test('shapedom.update variable template by variable template', function (t) {
   let shapedom;
-  let variable;
+  let variableTemplate;
   let variableNode, root;
 
   t.beforeEach(function (t) {
@@ -12,8 +12,8 @@ test('shapedom.update variable by variable', function (t) {
 
     root = document.createElement('div');
 
-    variable = shapedom.createTemplate(new Variable('hi there'));
-    variableNode = shapedom.render(variable);
+    variableTemplate = shapedom.createTemplate(new Variable('hi there'));
+    variableNode = shapedom.render(variableTemplate);
     root.appendChild(variableNode);
 
     t.end();
