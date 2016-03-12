@@ -12,9 +12,9 @@ test('shapedom.render a new variable template', function (t) {
   });
 
   t.test('non-empty variable', function (t) {
-    let variableTemplate = shapedom.createTemplate(new Variable('hi there'));
+    const variableTemplate = shapedom.createTemplate(new Variable('hi there'));
 
-    let result = shapedom.render(variableTemplate);
+    const result = shapedom.render(variableTemplate);
 
     t.assert(result instanceof Text);
     t.is(result.wholeText, 'hi there');
@@ -23,9 +23,9 @@ test('shapedom.render a new variable template', function (t) {
   });
 
   t.test('empty variable', function (t) {
-    let variableTemplate = shapedom.createTemplate(new Variable(''));
+    const variableTemplate = shapedom.createTemplate(new Variable(''));
 
-    let result = shapedom.render(variableTemplate);
+    const result = shapedom.render(variableTemplate);
 
     t.assert(result instanceof Text);
     t.is(result.wholeText, '');

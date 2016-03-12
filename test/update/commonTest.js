@@ -3,14 +3,14 @@ import test from 'tapes';
 import Shapedom from '../../dist/shapedom';
 
 test('shapedom.update unrendered node', function (t) {
-  let shapedom = new Shapedom(document);
+  const shapedom = new Shapedom(document);
 
-  let template = shapedom.createTemplate({
+  const template = shapedom.createTemplate({
     tag: 'div',
     attrs: {}
   });
 
-  let node = document.createElement('div');
+  const node = document.createElement('div');
 
   t.throws(() => {
     shapedom.update(node, template);
@@ -21,18 +21,18 @@ test('shapedom.update unrendered node', function (t) {
 
 
 test('shapedom.update unattached node', function (t) {
-  let shapedom = new Shapedom(document);
+  const shapedom = new Shapedom(document);
 
-  let template = shapedom.createTemplate({
+  const template = shapedom.createTemplate({
     tag: 'div',
     attrs: {}
   });
-  let anotherTemplate = shapedom.createTemplate({
+  const anotherTemplate = shapedom.createTemplate({
     tag: 'span',
     attrs: {}
   });
 
-  let element = shapedom.render(template);
+  const element = shapedom.render(template);
 
   t.throws(() => {
     shapedom.update(element, anotherTemplate);

@@ -20,7 +20,7 @@ test('shapedom.update variable template by element template', function (t) {
   });
 
   t.test('element template', function (t) {
-    let elementTemplate = shapedom.createTemplate({
+    const elementTemplate = shapedom.createTemplate({
       tag: 'div',
       attrs: {
         id: 'box123',
@@ -39,7 +39,7 @@ test('shapedom.update variable template by element template', function (t) {
       ]
     });
 
-    let result = shapedom.update(variableNode, elementTemplate);
+    const result = shapedom.update(variableNode, elementTemplate);
 
     t.is(root.childNodes[0], result);
     t.assert(result instanceof Element);

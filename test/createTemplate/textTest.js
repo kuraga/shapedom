@@ -12,7 +12,7 @@ test('shapedom.createTemplate with text shape', function (t) {
   });
 
   t.test('text shape', function (t) {
-    let result = shapedom.createTemplate('hi there');
+    const result = shapedom.createTemplate('hi there');
 
     t.assert(typeof result === 'string');
 

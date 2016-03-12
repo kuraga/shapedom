@@ -27,9 +27,9 @@ test('shapedom.update element template by text template', function (t) {
   });
 
   t.test('non-empty text', function (t) {
-    let textTemplate = shapedom.createTemplate('hi there');
+    const textTemplate = shapedom.createTemplate('hi there');
 
-    let result = shapedom.update(elementNode, textTemplate);
+    const result = shapedom.update(elementNode, textTemplate);
 
     t.is(root.childNodes[0], result);
     t.assert(result instanceof Text);

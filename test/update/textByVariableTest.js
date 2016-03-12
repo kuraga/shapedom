@@ -20,9 +20,9 @@ test('shapedom.update text template by variable template', function (t) {
   });
 
   t.test('with the same text', function (t) {
-    let variableTemplate = shapedom.createTemplate(new Variable('hi there'));
+    const variableTemplate = shapedom.createTemplate(new Variable('hi there'));
 
-    let result = shapedom.update(textNode, variableTemplate);
+    const result = shapedom.update(textNode, variableTemplate);
 
     t.is(root.childNodes[0], result);
     t.assert(result instanceof Text);
@@ -32,9 +32,9 @@ test('shapedom.update text template by variable template', function (t) {
   });
 
   t.test('with another text', function (t) {
-    let variableTemplate = shapedom.createTemplate(new Variable('new text'));
+    const variableTemplate = shapedom.createTemplate(new Variable('new text'));
 
-    let result = shapedom.update(textNode, variableTemplate);
+    const result = shapedom.update(textNode, variableTemplate);
 
     t.is(root.childNodes[0], result);
     t.assert(result instanceof Text);

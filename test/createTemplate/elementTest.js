@@ -12,7 +12,7 @@ test('shapedom.createTemplate with element shape', function (t) {
   });
 
   t.test('without children', function (t) {
-    let result = shapedom.createTemplate({
+    const result = shapedom.createTemplate({
       tag: 'div',
       attrs: {
         id: 'someId',
@@ -26,7 +26,7 @@ test('shapedom.createTemplate with element shape', function (t) {
   });
 
   t.test('with children', function (t) {
-    let result = shapedom.createTemplate({
+    const result = shapedom.createTemplate({
       tag: 'div',
       attrs: {
         id: 'someId',

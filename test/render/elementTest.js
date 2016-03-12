@@ -13,12 +13,12 @@ test('shapedom.render a new element template', function (t) {
 
   t.test('without children', function (t) {
     t.test('without attributes', function (t) {
-      let elementTemplate = shapedom.createTemplate({
+      const elementTemplate = shapedom.createTemplate({
         tag: 'div',
         attrs: {}
       });
 
-      let result = shapedom.render(elementTemplate);
+      const result = shapedom.render(elementTemplate);
 
       t.assert(result instanceof Element);
       t.is(result.outerHTML, '<div></div>');
@@ -27,7 +27,7 @@ test('shapedom.render a new element template', function (t) {
     });
 
     t.test('with attributes', function (t) {
-      let elementTemplate = shapedom.createTemplate({
+      const elementTemplate = shapedom.createTemplate({
         tag: 'div',
         attrs: {
           id: 'someId',
@@ -35,7 +35,7 @@ test('shapedom.render a new element template', function (t) {
         }
       });
 
-      let result = shapedom.render(elementTemplate);
+      const result = shapedom.render(elementTemplate);
 
       t.assert(result instanceof Element);
       t.is(result.outerHTML, '<div id="someId" class="someClass anotherClass"></div>');
@@ -47,7 +47,7 @@ test('shapedom.render a new element template', function (t) {
   });
 
   t.test('with children', function (t) {
-    let template = shapedom.createTemplate({
+    const template = shapedom.createTemplate({
       tag: 'div',
       attrs: {
         id: 'someId',
@@ -65,7 +65,7 @@ test('shapedom.render a new element template', function (t) {
       ]
     });
 
-    let result = shapedom.render(template);
+    const result = shapedom.render(template);
 
     t.assert(result instanceof Element);
     t.is(result.outerHTML, '<div id="someId" class="someClass anotherClass">header<span class="content"></span>footer</div>');

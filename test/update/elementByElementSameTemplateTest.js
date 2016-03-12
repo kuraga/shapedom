@@ -40,7 +40,7 @@ test('shapedom.update element template by same template', function (t) {
   });
 
   t.test('with exactly the same template instance', function (t) {
-    let result = shapedom.update(elementNode, elementTemplate);
+    const result = shapedom.update(elementNode, elementTemplate);
 
     t.is(root.childNodes[0], result);
     t.assert(result instanceof Element);
@@ -50,7 +50,7 @@ test('shapedom.update element template by same template', function (t) {
   });
 
   t.test('with no changes', function (t) {
-    let result = shapedom.update(elementNode, clonedElementTemplate);
+    const result = shapedom.update(elementNode, clonedElementTemplate);
 
     t.assert(result instanceof Element);
     t.is(result.outerHTML, '<div id="box123" class="box cube">another text<span class="content">some text</span>yet another text</div>');
@@ -63,7 +63,7 @@ test('shapedom.update element template by same template', function (t) {
       clonedElementTemplate.attrs.id = 'bag123';
       clonedElementTemplate.attrs.class = 'bag';
 
-      let result = shapedom.update(elementNode, clonedElementTemplate);
+      const result = shapedom.update(elementNode, clonedElementTemplate);
 
       t.is(root.childNodes[0], result);
       t.assert(result instanceof Element);
@@ -79,7 +79,7 @@ test('shapedom.update element template by same template', function (t) {
     t.test('child\'s text changed', function (t) {
       clonedElementTemplate.children[2] = 'yet another helpful text';
 
-      let result = shapedom.update(elementNode, clonedElementTemplate);
+      const result = shapedom.update(elementNode, clonedElementTemplate);
 
       t.is(root.childNodes[0], result);
       t.assert(result instanceof Element);
@@ -91,7 +91,7 @@ test('shapedom.update element template by same template', function (t) {
     t.test('child\'s attribute changed', function (t) {
       clonedElementTemplate.children[1].attrs.class = 'seriousContent';
 
-      let result = shapedom.update(elementNode, clonedElementTemplate);
+      const result = shapedom.update(elementNode, clonedElementTemplate);
 
       t.is(root.childNodes[0], result);
       t.assert(result instanceof Element);
@@ -103,7 +103,7 @@ test('shapedom.update element template by same template', function (t) {
     t.test('child\'s child changed', function (t) {
       clonedElementTemplate.children[1].children[0] = 'total new text';
 
-      let result = shapedom.update(elementNode, clonedElementTemplate);
+      const result = shapedom.update(elementNode, clonedElementTemplate);
 
       t.is(root.childNodes[0], result);
       t.assert(result instanceof Element);

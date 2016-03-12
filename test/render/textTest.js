@@ -12,9 +12,9 @@ test('shapedom.render a new text template', function (t) {
   });
 
   t.test('non-empty text', function (t) {
-    let textTemplate = shapedom.createTemplate('hi there');
+    const textTemplate = shapedom.createTemplate('hi there');
 
-    let result = shapedom.render(textTemplate);
+    const result = shapedom.render(textTemplate);
 
     t.assert(result instanceof Text);
     t.is(result.wholeText, 'hi there');
@@ -23,9 +23,9 @@ test('shapedom.render a new text template', function (t) {
   });
 
   t.test('empty text', function (t) {
-    let textTemplate = shapedom.createTemplate('');
+    const textTemplate = shapedom.createTemplate('');
 
-    let result = shapedom.render(textTemplate);
+    const result = shapedom.render(textTemplate);
 
     t.assert(result instanceof Text);
     t.is(result.wholeText, '');

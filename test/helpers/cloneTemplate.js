@@ -4,7 +4,7 @@ export default function cloneTemplate(templateOrString) {
   if (typeof templateOrString === 'string' || templateOrString instanceof String) {
     return templateOrString;
   } else if (templateOrString instanceof Template) {
-    let clonedTemplate = new Template();
+    const clonedTemplate = new Template();
 
     clonedTemplate.uuid = templateOrString.uuid;
     clonedTemplate.tag = templateOrString.tag;
