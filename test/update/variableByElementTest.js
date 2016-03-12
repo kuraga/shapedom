@@ -1,20 +1,20 @@
 import test from 'tapes';
 
-import Shapedom from '../../dist/shapedom';
+import Shapedom, { Variable } from '../../dist/shapedom';
 
-test('shapedom.update text template by element template', function (t) {
+test('shapedom.update variable template by element template', function (t) {
   let shapedom;
-  let textTemplate;
-  let textNode, root;
+  let variable;
+  let variableNode, root;
 
   t.beforeEach(function (t) {
     shapedom = new Shapedom(document);
 
     root = document.createElement('div');
 
-    textTemplate = shapedom.createTemplate('hi there');
-    textNode = shapedom.render(textTemplate);
-    root.appendChild(textNode);
+    variable = shapedom.createTemplate(new Variable('hi there'));
+    variableNode = shapedom.render(variable);
+    root.appendChild(variableNode);
 
     t.end();
   });
@@ -35,11 +35,11 @@ test('shapedom.update text template by element template', function (t) {
           },
           children: ['some text']
         },
-        'yet another text'
+        new Variable('yet another text')
       ]
     });
 
-    let result = shapedom.update(textNode, elementTemplate);
+    let result = shapedom.update(variableNode, elementTemplate);
 
     t.is(root.childNodes[0], result);
     t.assert(result instanceof Element);

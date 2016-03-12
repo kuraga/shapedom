@@ -13,7 +13,7 @@ const uuid = require('an-uuid');
 
 export interface Shape {
   tag: string;
-  attrs: { [key: string]: string };
+  attrs: { [key: string]: string | Variable };
   // TODO: Also child can be a template
   children?: Shape[];
 }
@@ -22,8 +22,35 @@ export interface Shape {
 export class Template {
   uuid: string;
   tag: string;
-  attrs: { [key: string]: string };
-  children: (Template | string)[];
+  attrs: { [key: string]: string | Variable };
+  children: (Template | string | Variable)[];
+}
+
+
+export class Variable {
+  private __value: string;
+
+  constructor(value: string) {
+    this.set(value);
+  }
+
+  set(value: string): this {
+    this.__value = value;
+    return this;
+  }
+
+  get(): string {
+    return this.__value;
+  }
+}
+
+
+function __getStringFromStringOrVariable(stringOrVariable: string | Variable): string {
+  if (stringOrVariable instanceof Variable) {
+    return stringOrVariable.get();
+  } else {
+    return stringOrVariable;
+  }
 }
 
 
@@ -37,19 +64,19 @@ export default class Shapedom {
     this.__templates = new WeakMap<Node, Template | string>();
   }
 
-  createTemplate(shapeOrString: Shape | string): Template | string {
-    if (typeof shapeOrString === 'string' || shapeOrString instanceof String) {
-      return shapeOrString;
+  createTemplate(shapeOrStringOrVariable: Shape | string | Variable): Template | string {
+    if (typeof shapeOrStringOrVariable === 'string' || shapeOrStringOrVariable instanceof String || shapeOrStringOrVariable instanceof Variable) {
+      return __getStringFromStringOrVariable(shapeOrStringOrVariable);
     } else {
       const template: Template = new Template();
 
       template.uuid = uuid();
-      template.tag = shapeOrString.tag;
-      template.attrs = Object.assign({}, shapeOrString.attrs);
+      template.tag = shapeOrStringOrVariable.tag;
+      template.attrs = Object.assign({}, shapeOrStringOrVariable.attrs);
 
       template.children = [];
-      if ('children' in shapeOrString) {
-        for (const childShape of shapeOrString.children) {
+      if ('children' in shapeOrStringOrVariable) {
+        for (const childShape of shapeOrStringOrVariable.children) {
           const childTemplate = this.createTemplate(childShape);
           template.children.push(childTemplate);
         }
@@ -59,10 +86,12 @@ export default class Shapedom {
     }
   }
 
-  __createText(text: string): Text {
+  __createText(textOrVariable: string | Variable): Text {
+    const text: string = __getStringFromStringOrVariable(textOrVariable);
+
     const textNode: Text = this.document.createTextNode(text);
 
-    this.__templates.set(textNode, text);  
+    this.__templates.set(textNode, text);
 
     return textNode;
   }
@@ -71,7 +100,7 @@ export default class Shapedom {
     const element: Element = this.document.createElement(template.tag);
 
     for (const attrName of Object.keys(template.attrs)) {
-      const attrValue = template.attrs[attrName];
+      const attrValue = __getStringFromStringOrVariable(template.attrs[attrName]);
       element.setAttribute(attrName, attrValue);
     }
 
@@ -85,18 +114,19 @@ export default class Shapedom {
     return element;
   }
 
-  __createNode(templateOrString: Template | string): Node {
-    if (typeof templateOrString === 'string' || templateOrString instanceof String) {
-      return this.__createText(templateOrString);
-    } else if (templateOrString instanceof Template) {
-      return this.__createElement(templateOrString);
+  __createNode(templateOrStringOrVariable: Template | string | Variable): Node {
+    if (typeof templateOrStringOrVariable === 'string' || templateOrStringOrVariable instanceof String || templateOrStringOrVariable instanceof Variable) {
+      return this.__createText(templateOrStringOrVariable);
+    } else if (templateOrStringOrVariable instanceof Template) {
+      return this.__createElement(templateOrStringOrVariable);
     } else {
       throw new Error(`Invalid template type`);
     }
   }
 
-  __updateTextByText(textNode: Text, newText: string): Text {
+  __updateTextByText(textNode: Text, newTextStringOrVariable: string | Variable): Text {
     const oldText = this.__templates.get(textNode);
+    const newText = __getStringFromStringOrVariable(newTextStringOrVariable);
 
     if (newText === oldText) {
       return textNode;
@@ -125,7 +155,9 @@ export default class Shapedom {
     return newElement;
   }
 
-  __updateElementByText(element: Element, newText: string): Text {
+  __updateElementByText(element: Element, newTextStringOrVariable: string | Variable): Text {
+    const newText = __getStringFromStringOrVariable(newTextStringOrVariable);
+
     this.__removeChildren(element);
     this.__templates.delete(element);
 
@@ -160,8 +192,8 @@ export default class Shapedom {
     // Structure of newTemplate is the same as oldTemplate's,
     // so newTemplate.attrs === oldTemplate.attrs
     for (const newAttrName of Object.keys(newTemplate.attrs)) {
-      const oldAttrValue = oldTemplate.attrs[newAttrName];
-      const newAttrValue = newTemplate.attrs[newAttrName];
+      const oldAttrValue = __getStringFromStringOrVariable(oldTemplate.attrs[newAttrName]);
+      const newAttrValue = __getStringFromStringOrVariable(newTemplate.attrs[newAttrName]);
       if (newAttrValue !== oldAttrValue) {
         element.setAttribute(newAttrName, newAttrValue);
       }
@@ -184,7 +216,7 @@ export default class Shapedom {
     return element;
   }
 
-  __updateChildren(element: Element, newChildren: (Template | string)[]): NodeList {
+  __updateChildren(element: Element, newChildren: (Template | string | Variable)[]): NodeList {
     const template = <Template> this.__templates.get(element);
     const oldChildren = template.children;
 
@@ -215,15 +247,15 @@ export default class Shapedom {
     const oldTemplate = <Template> this.__templates.get(element);
 
     for (const oldAttrName of Object.keys(oldTemplate.attrs)) {
-      const newAttrValue = newTemplate.attrs[oldAttrName];
-      if (!newAttrValue) {
+      const newAttrValue = __getStringFromStringOrVariable(newTemplate.attrs[oldAttrName]);
+      if (newAttrValue === undefined) {
         element.removeAttribute(oldAttrName);
       }
     }
 
     for (const newAttrName of Object.keys(newTemplate.attrs)) {
-      const oldAttrValue = oldTemplate.attrs[newAttrName];
-      const newAttrValue = newTemplate.attrs[newAttrName];
+      const oldAttrValue = __getStringFromStringOrVariable(oldTemplate.attrs[newAttrName]);
+      const newAttrValue = __getStringFromStringOrVariable(newTemplate.attrs[newAttrName]);
       if (newAttrValue !== oldAttrValue) {
         element.setAttribute(newAttrName, newAttrValue);
       }
@@ -262,7 +294,7 @@ export default class Shapedom {
     }
   }
 
-  __updateNode(node: Node, newTemplate: Template | string): Node {
+  __updateNode(node: Node, newTemplate: Template | string | Variable): Node {
     const oldTemplate = this.__templates.get(node);
 
     if (newTemplate === oldTemplate) {
@@ -276,15 +308,21 @@ export default class Shapedom {
         } else {
           return this.__updateElementByElementDifferentTemplate(<Element> node, newTemplate);
         }
-      } else if (typeof newTemplate === 'string' || newTemplate instanceof String) {
+      } else if (typeof newTemplate === 'string' || newTemplate instanceof String || newTemplate instanceof Variable) {
         return this.__updateElementByText(<Element> node, newTemplate);
+      } else {
+        throw new Error(`Invalid type`);
       }
-    } else if (typeof oldTemplate === 'string' || oldTemplate instanceof String) {
+    } else if (typeof oldTemplate === 'string' || oldTemplate instanceof String || oldTemplate instanceof Variable) {
       if (newTemplate instanceof Template) {
         return this.__updateTextByElement(<Text> node, newTemplate);
-      } else if (typeof newTemplate === 'string' || newTemplate instanceof String) {
+      } else if (typeof newTemplate === 'string' || newTemplate instanceof String || newTemplate instanceof Variable) {
         return this.__updateTextByText(<Text> node, newTemplate);
+      } else {
+        throw new Error(`Invalid type`);
       }
+    } else {
+      throw new Error(`Invalid type`);
     }
   }
 

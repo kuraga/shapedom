@@ -1,6 +1,6 @@
 import test from 'tapes';
 
-import Shapedom from '../../dist/shapedom';
+import Shapedom, { Variable } from '../../dist/shapedom';
 
 test('shapedom.render a new element template', function (t) {
   let shapedom;
@@ -31,7 +31,7 @@ test('shapedom.render a new element template', function (t) {
         tag: 'div',
         attrs: {
           id: 'someId',
-          class: 'someClass anotherClass'
+          class: new Variable('someClass anotherClass')
         }
       });
 
@@ -61,7 +61,7 @@ test('shapedom.render a new element template', function (t) {
             class: 'content'
           }
         },
-        'footer'
+        new Variable('footer')
       ]
     });
 

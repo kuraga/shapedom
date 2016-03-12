@@ -1,7 +1,7 @@
 import test from 'tapes';
 import cloneTemplate from '../helpers/cloneTemplate';
 
-import Shapedom from '../../dist/shapedom';
+import Shapedom, { Variable } from '../../dist/shapedom';
 
 test('shapedom.update element template by same template', function (t) {
   let shapedom;
@@ -20,6 +20,7 @@ test('shapedom.update element template by same template', function (t) {
         class: 'box cube'
       },
       children: [
+        'another text',
         {
           tag: 'span',
           attrs: {
@@ -27,7 +28,7 @@ test('shapedom.update element template by same template', function (t) {
           },
           children: ['some text']
         },
-        'another text'
+        'yet another text'
       ]
     });
     elementNode = shapedom.render(elementTemplate);
@@ -43,7 +44,7 @@ test('shapedom.update element template by same template', function (t) {
 
     t.is(root.childNodes[0], result);
     t.assert(result instanceof Element);
-    t.is(result.outerHTML, '<div id="box123" class="box cube"><span class="content">some text</span>another text</div>');
+    t.is(result.outerHTML, '<div id="box123" class="box cube">another text<span class="content">some text</span>yet another text</div>');
 
     t.end();
   });
@@ -52,7 +53,7 @@ test('shapedom.update element template by same template', function (t) {
     let result = shapedom.update(elementNode, clonedElementTemplate);
 
     t.assert(result instanceof Element);
-    t.is(result.outerHTML, '<div id="box123" class="box cube"><span class="content">some text</span>another text</div>');
+    t.is(result.outerHTML, '<div id="box123" class="box cube">another text<span class="content">some text</span>yet another text</div>');
 
     t.end();
   });
@@ -66,7 +67,7 @@ test('shapedom.update element template by same template', function (t) {
 
       t.is(root.childNodes[0], result);
       t.assert(result instanceof Element);
-      t.is(result.outerHTML, '<div id="bag123" class="bag"><span class="content">some text</span>another text</div>');
+      t.is(result.outerHTML, '<div id="bag123" class="bag">another text<span class="content">some text</span>yet another text</div>');
 
       t.end();
     });
@@ -76,37 +77,37 @@ test('shapedom.update element template by same template', function (t) {
 
   t.test('child changed', function (t) {
     t.test('child\'s text changed', function (t) {
-      clonedElementTemplate.children[1] = 'another helpful text';
+      clonedElementTemplate.children[2] = 'yet another helpful text';
 
       let result = shapedom.update(elementNode, clonedElementTemplate);
 
       t.is(root.childNodes[0], result);
       t.assert(result instanceof Element);
-      t.is(result.outerHTML, '<div id="box123" class="box cube"><span class="content">some text</span>another helpful text</div>');
+      t.is(result.outerHTML, '<div id="box123" class="box cube">another text<span class="content">some text</span>yet another helpful text</div>');
 
       t.end();
     });
 
     t.test('child\'s attribute changed', function (t) {
-      clonedElementTemplate.children[0].attrs.class = 'seriousContent';
+      clonedElementTemplate.children[1].attrs.class = 'seriousContent';
 
       let result = shapedom.update(elementNode, clonedElementTemplate);
 
       t.is(root.childNodes[0], result);
       t.assert(result instanceof Element);
-      t.is(result.outerHTML, '<div id="box123" class="box cube"><span class="seriousContent">some text</span>another text</div>');
+      t.is(result.outerHTML, '<div id="box123" class="box cube">another text<span class="seriousContent">some text</span>yet another text</div>');
 
       t.end();
     });
 
     t.test('child\'s child changed', function (t) {
-      clonedElementTemplate.children[0].children[0] = 'total new text';
+      clonedElementTemplate.children[1].children[0] = 'total new text';
 
       let result = shapedom.update(elementNode, clonedElementTemplate);
 
       t.is(root.childNodes[0], result);
       t.assert(result instanceof Element);
-      t.is(result.outerHTML, '<div id="box123" class="box cube"><span class="content">total new text</span>another text</div>');
+      t.is(result.outerHTML, '<div id="box123" class="box cube">another text<span class="content">total new text</span>yet another text</div>');
 
       t.end();
     });
