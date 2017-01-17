@@ -47,7 +47,13 @@ test('shapedom.render a new element template', function (t) {
   });
 
   t.test('with children', function (t) {
-    const template = shapedom.createTemplate({
+    const anotherElementTemplate = shapedom.createTemplate({
+      tag: 'div',
+      attrs: {
+        id: 'someId'
+      }
+    });
+    const elementTemplate = shapedom.createTemplate({
       tag: 'div',
       attrs: {
         id: 'someId',
@@ -61,14 +67,15 @@ test('shapedom.render a new element template', function (t) {
             class: 'content'
           }
         },
+        anotherElementTemplate,
         new Variable('footer')
       ]
     });
 
-    const result = shapedom.render(template);
+    const result = shapedom.render(elementTemplate);
 
     t.assert(result instanceof Element);
-    t.is(result.outerHTML, '<div id="someId" class="someClass anotherClass">header<span class="content"></span>footer</div>');
+    t.is(result.outerHTML, '<div id="someId" class="someClass anotherClass">header<span class="content"></span><div id="someId"></div>footer</div>');
 
     t.end();
   });

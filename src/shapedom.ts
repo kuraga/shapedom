@@ -14,8 +14,7 @@ const uuid = require('an-uuid');
 export interface Shape {
   tag: string;
   attrs: { [key: string]: string | Variable };
-  // TODO: Also child can be a template
-  children?: Shape[];
+  children?: (string | Variable | Shape | Template)[];
 }
 
 
@@ -76,8 +75,10 @@ export default class Shapedom {
 
       template.children = [];
       if ('children' in shapeOrStringOrVariable) {
-        for (const childShape of shapeOrStringOrVariable.children) {
-          const childTemplate = this.createTemplate(childShape);
+        for (const childStringOrVariableOrShapeOrTemplate of shapeOrStringOrVariable.children) {
+          const childTemplate = (childStringOrVariableOrShapeOrTemplate instanceof Template) ?
+            childStringOrVariableOrShapeOrTemplate :
+            this.createTemplate(childStringOrVariableOrShapeOrTemplate);
           template.children.push(childTemplate);
         }
       }

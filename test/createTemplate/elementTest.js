@@ -1,6 +1,6 @@
 import test from 'tapes';
 
-import Shapedom, { Template } from '../../dist/shapedom';
+import Shapedom, { Variable, Template } from '../../dist/shapedom';
 
 test('shapedom.createTemplate with element shape', function (t) {
   let shapedom;
@@ -26,6 +26,12 @@ test('shapedom.createTemplate with element shape', function (t) {
   });
 
   t.test('with children', function (t) {
+    const anotherElementTemplate = shapedom.createTemplate({
+      tag: 'div',
+      attrs: {
+        id: 'someId'
+      }
+    });
     const result = shapedom.createTemplate({
       tag: 'div',
       attrs: {
@@ -36,9 +42,12 @@ test('shapedom.createTemplate with element shape', function (t) {
         'header',
         {
           tag: 'span',
-          attrs: {}
+          attrs: {
+            class: 'content'
+          }
         },
-        'footer'
+        anotherElementTemplate,
+        new Variable('footer')
       ]
     });
 
