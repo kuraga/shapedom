@@ -14,30 +14,30 @@ export declare class Template {
     children: (Template | string | Variable)[];
 }
 export declare class Variable {
-    private __value;
+    protected __value: string;
     constructor(value: string);
     set(value: string): this;
     get(): string;
 }
 export default class Shapedom {
     document: Document;
-    private __templates;
+    protected __templates: WeakMap<Node, Template | string>;
     constructor(document: Document);
     createTemplate(shapeOrStringOrVariable: Shape | string | Variable): Template | string;
-    __createText(textOrVariable: string | Variable): Text;
-    __createElement(template: Template): Element;
-    __createNode(templateOrStringOrVariable: Template | string | Variable): Node;
-    __updateTextByText(textNode: Text, newTextStringOrVariable: string | Variable): Text;
-    __updateTextByElement(textNode: Text, newTemplate: Template): Element;
-    __updateElementByText(element: Element, newTextStringOrVariable: string | Variable): Text;
-    __removeNode(node: Node): void;
-    __removeChildren(node: Node): void;
-    __updateElementByElementSameTemplate(element: Element, newTemplate: Template): Element;
-    __updateChildren(element: Element, newChildren: (Template | string | Variable)[]): NodeList;
-    __updateElementByElementDifferentTemplateSameTag(element: Element, newTemplate: Template): Element;
-    __updateElementByElementDifferentTemplateDifferentTag(element: Element, newTemplate: Template): Element;
-    __updateElementByElementDifferentTemplate(element: Element, newTemplate: Template): Element;
-    __updateNode(node: Node, newTemplate: Template | string | Variable): Node;
+    protected __createText(textOrVariable: string | Variable): Text;
+    protected __createElement(template: Template): Element;
+    protected __createNode(templateOrStringOrVariable: Template | string | Variable): Node;
+    protected __updateTextByText(textNode: Text, newTextStringOrVariable: string | Variable): Text;
+    protected __updateTextByElement(textNode: Text, newTemplate: Template): Element;
+    protected __updateElementByText(element: Element, newTextStringOrVariable: string | Variable): Text;
+    protected __removeNode(node: Node): void;
+    protected __removeChildren(node: Node): void;
+    protected __updateElementByElementSameTemplate(element: Element, newTemplate: Template): Element;
+    protected __updateChildren(element: Element, newChildren: (Template | string | Variable)[]): NodeList;
+    protected __updateElementByElementDifferentTemplateSameTag(element: Element, newTemplate: Template): Element;
+    protected __updateElementByElementDifferentTemplateDifferentTag(element: Element, newTemplate: Template): Element;
+    protected __updateElementByElementDifferentTemplate(element: Element, newTemplate: Template): Element;
+    protected __updateNode(node: Node, newTemplate: Template | string | Variable): Node;
     render(template: Template): Node;
     update(node: Node, template: Template): Node;
 }
