@@ -1,9 +1,7 @@
-// TODO: Namespaces
-// TODO: properties vs attributes
-
 // TODO: Keyed reordering
-// TODO: Fragments (sequences of templates)
+// TODO: Fragments (sequences of templates and fragments)
 
+// TODO: Namespaces
 
 // TODO: Get rid of CommonJS API
 declare var require: (id: string) => any;
