@@ -11,10 +11,12 @@ test('shapedom.createTemplate with variable', function (t) {
     t.end();
   });
 
-  t.test('text shape', function (t) {
-    const result = shapedom.createTemplate(new Variable('hi there'));
+  t.test('return the same variable', function (t) {
+    const variable = new Variable('hi there');
 
-    t.assert(typeof result === 'string');
+    const result = shapedom.createTemplate(variable);
+
+    t.assert(result === variable);
 
     t.end();
   });

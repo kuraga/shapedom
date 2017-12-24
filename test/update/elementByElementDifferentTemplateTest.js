@@ -3,7 +3,7 @@ import clone from 'clone';
 
 import Shapedom, { Variable } from '../../dist/shapedom';
 
-test('shapedom.update element template by same template', function (t) {
+test('shapedom.update element template by different template', function (t) {
   let shapedom;
   let elementShape, clonedElementShape;
   let elementTemplate;
