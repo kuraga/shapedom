@@ -1,7 +1,12 @@
-// TODO: Namespaces
-// TODO: properties vs attributes
-const uuid = require('an-uuid');
+// TODO: Keyed reordering
+const uuidv4 = require('an-uuid');
 export class Template {
+    constructor(uuid, tag, attrs, children = []) {
+        this.uuid = uuid;
+        this.tag = tag;
+        this.attrs = attrs;
+        this.children = children;
+    }
 }
 export class Variable {
     constructor(value) {
@@ -28,24 +33,52 @@ export default class Shapedom {
         this.document = document;
         this.__templates = new WeakMap();
     }
-    createTemplate(shapeOrStringOrVariable) {
-        if (typeof shapeOrStringOrVariable === 'string' || shapeOrStringOrVariable instanceof String || shapeOrStringOrVariable instanceof Variable) {
-            return __getStringFromStringOrVariable(shapeOrStringOrVariable);
+    createTemplate(stringOrVariableOrShapeOrTemplate) {
+        if (typeof stringOrVariableOrShapeOrTemplate === 'string') {
+            return stringOrVariableOrShapeOrTemplate;
+        }
+        else if (stringOrVariableOrShapeOrTemplate instanceof Variable) {
+            return stringOrVariableOrShapeOrTemplate;
+        }
+        else if (stringOrVariableOrShapeOrTemplate instanceof Template) {
+            return stringOrVariableOrShapeOrTemplate;
         }
         else {
-            const template = new Template();
-            template.uuid = uuid();
-            template.tag = shapeOrStringOrVariable.tag;
-            template.attrs = Object.assign({}, shapeOrStringOrVariable.attrs);
-            template.children = [];
-            if ('children' in shapeOrStringOrVariable) {
-                for (const childShape of shapeOrStringOrVariable.children) {
-                    const childTemplate = this.createTemplate(childShape);
-                    template.children.push(childTemplate);
-                }
-            }
+            const uuid = uuidv4(), tag = stringOrVariableOrShapeOrTemplate.tag, attrs = Object.assign({}, stringOrVariableOrShapeOrTemplate.attrs), children = (stringOrVariableOrShapeOrTemplate.children !== undefined) ?
+                stringOrVariableOrShapeOrTemplate.children.map((templateChild) => (templateChild instanceof Template) ?
+                    templateChild :
+                    this.createTemplate(templateChild)) :
+                [];
+            const template = new Template(uuid, tag, attrs, children);
             return template;
         }
+    }
+    __removeNode(node) {
+        const parent = node.parentNode;
+        if (parent !== null) {
+            parent.removeChild(node);
+        }
+        this.__templates.delete(node);
+    }
+    __removeChildNodes(node) {
+        for (const childNode of node.childNodes) {
+            this.__removeNode(childNode);
+        }
+    }
+    __replaceNode(oldNode, newNode, newStringOrVariableOrTemplate) {
+        this.__removeChildNodes(oldNode);
+        const parent = oldNode.parentNode;
+        if (parent !== null) {
+            parent.replaceChild(newNode, oldNode);
+        }
+        this.__templates.set(newNode, newStringOrVariableOrTemplate);
+        this.__templates.delete(oldNode);
+        return newNode;
+    }
+    __appendNode(parent, newNode, stringOrVariableOrTemplate) {
+        parent.appendChild(newNode);
+        this.__templates.set(newNode, stringOrVariableOrTemplate);
+        return newNode;
     }
     __createText(textOrVariable) {
         const text = __getStringFromStringOrVariable(textOrVariable);
@@ -66,12 +99,12 @@ export default class Shapedom {
         this.__templates.set(element, template);
         return element;
     }
-    __createNode(templateOrStringOrVariable) {
-        if (typeof templateOrStringOrVariable === 'string' || templateOrStringOrVariable instanceof String || templateOrStringOrVariable instanceof Variable) {
-            return this.__createText(templateOrStringOrVariable);
+    __createNode(stringOrVariableOrTemplateOrFragment) {
+        if (typeof stringOrVariableOrTemplateOrFragment === 'string' || stringOrVariableOrTemplateOrFragment instanceof Variable) {
+            return this.__createText(stringOrVariableOrTemplateOrFragment);
         }
-        else if (templateOrStringOrVariable instanceof Template) {
-            return this.__createElement(templateOrStringOrVariable);
+        else if (stringOrVariableOrTemplateOrFragment instanceof Template) {
+            return this.__createElement(stringOrVariableOrTemplateOrFragment);
         }
         else {
             throw new Error(`Invalid template type`);
@@ -83,40 +116,22 @@ export default class Shapedom {
         if (newText === oldText) {
             return textNode;
         }
-        this.__templates.delete(textNode);
         const newTextNode = this.__createText(newText);
-        const parent = textNode.parentNode;
-        parent.replaceChild(newTextNode, textNode);
-        this.__templates.set(newTextNode, newText);
+        this.__replaceNode(textNode, newTextNode, newTextStringOrVariable);
         return newTextNode;
     }
-    __updateTextByElement(textNode, newTemplate) {
-        this.__templates.delete(textNode);
+    __updateTextByTemplate(textNode, newTemplate) {
         const newElement = this.__createElement(newTemplate);
-        const parent = textNode.parentNode;
-        parent.replaceChild(newElement, textNode);
+        this.__replaceNode(textNode, newElement, newTemplate);
         return newElement;
     }
     __updateElementByText(element, newTextStringOrVariable) {
         const newText = __getStringFromStringOrVariable(newTextStringOrVariable);
-        this.__removeChildren(element);
-        this.__templates.delete(element);
         const newTextNode = this.__createText(newText);
-        const parent = element.parentNode;
-        parent.replaceChild(newTextNode, element);
+        this.__replaceNode(element, newTextNode, newTextStringOrVariable);
         return newTextNode;
     }
-    __removeNode(node) {
-        const parent = node.parentNode;
-        parent.removeChild(node);
-        this.__templates.delete(node);
-    }
-    __removeChildren(node) {
-        for (const childNode of node.childNodes) {
-            this.__removeNode(childNode);
-        }
-    }
-    __updateElementByElementSameTemplate(element, newTemplate) {
+    __updateElementBySameTemplate(element, newTemplate) {
         const oldTemplate = this.__templates.get(element);
         // Structure of newTemplate is the same as oldTemplate's,
         // so newTemplate.tag === oldTemplate.tag
@@ -147,15 +162,15 @@ export default class Shapedom {
         const oldChildren = template.children;
         const childrenToUpdate = Math.min(oldChildren.length, newChildren.length);
         for (let i = 0; i < childrenToUpdate; ++i) {
-            const newChildTemplate = newChildren[i];
+            const newChildStringOrVariableOrTemplateOrFragment = newChildren[i];
             const childNode = element.childNodes[i]; // TODO: Refactor
-            this.__updateNode(childNode, newChildTemplate);
+            this.__updateNode(childNode, newChildStringOrVariableOrTemplateOrFragment);
         }
         if (oldChildren.length <= newChildren.length) {
             for (let i = childrenToUpdate; i < newChildren.length; ++i) {
-                const newChild = newChildren[i];
-                const newChildNode = this.__createNode(newChild);
-                element.appendChild(newChildNode);
+                const newChildStringOrVariableOrTemplateOrFragment = newChildren[i];
+                const newChildNode = this.__createNode(newChildStringOrVariableOrTemplateOrFragment);
+                this.__appendNode(element, newChildNode, newChildStringOrVariableOrTemplateOrFragment);
             }
         }
         else {
@@ -166,7 +181,7 @@ export default class Shapedom {
         }
         return element.childNodes;
     }
-    __updateElementByElementDifferentTemplateSameTag(element, newTemplate) {
+    __updateElementByDifferentTemplateSameTag(element, newTemplate) {
         const oldTemplate = this.__templates.get(element);
         for (const oldAttrName of Object.keys(oldTemplate.attrs)) {
             const newAttrValue = __getStringFromStringOrVariable(newTemplate.attrs[oldAttrName]);
@@ -186,22 +201,24 @@ export default class Shapedom {
         this.__templates.set(element, newTemplate);
         return element;
     }
-    __updateElementByElementDifferentTemplateDifferentTag(element, newTemplate) {
+    __updateElementByDifferentTemplateDifferentTag(element, newTemplate) {
         const oldTemplate = this.__templates.get(element);
-        this.__removeChildren(element);
+        this.__removeChildNodes(element);
         this.__templates.delete(element);
         const newElement = this.__createElement(newTemplate);
         const parent = element.parentNode;
-        parent.replaceChild(newElement, element);
+        if (parent !== null) {
+            parent.replaceChild(newElement, element);
+        }
         return newElement;
     }
-    __updateElementByElementDifferentTemplate(element, newTemplate) {
+    __updateElementByDifferentTemplate(element, newTemplate) {
         const oldTemplate = this.__templates.get(element);
         if (newTemplate.tag === oldTemplate.tag) {
-            return this.__updateElementByElementDifferentTemplateSameTag(element, newTemplate);
+            return this.__updateElementByDifferentTemplateSameTag(element, newTemplate);
         }
         else {
-            return this.__updateElementByElementDifferentTemplateDifferentTag(element, newTemplate);
+            return this.__updateElementByDifferentTemplateDifferentTag(element, newTemplate);
         }
     }
     __updateNode(node, newTemplate) {
@@ -212,13 +229,13 @@ export default class Shapedom {
         if (oldTemplate instanceof Template) {
             if (newTemplate instanceof Template) {
                 if (newTemplate.uuid === oldTemplate.uuid) {
-                    return this.__updateElementByElementSameTemplate(node, newTemplate);
+                    return this.__updateElementBySameTemplate(node, newTemplate);
                 }
                 else {
-                    return this.__updateElementByElementDifferentTemplate(node, newTemplate);
+                    return this.__updateElementByDifferentTemplate(node, newTemplate);
                 }
             }
-            else if (typeof newTemplate === 'string' || newTemplate instanceof String || newTemplate instanceof Variable) {
+            else if (typeof newTemplate === 'string' || newTemplate instanceof Variable) {
                 return this.__updateElementByText(node, newTemplate);
             }
             else {
@@ -227,7 +244,7 @@ export default class Shapedom {
         }
         else if (typeof oldTemplate === 'string' || oldTemplate instanceof String || oldTemplate instanceof Variable) {
             if (newTemplate instanceof Template) {
-                return this.__updateTextByElement(node, newTemplate);
+                return this.__updateTextByTemplate(node, newTemplate);
             }
             else if (typeof newTemplate === 'string' || newTemplate instanceof String || newTemplate instanceof Variable) {
                 return this.__updateTextByText(node, newTemplate);
